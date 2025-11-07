@@ -5,56 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Premier League (CPL)</title>
   <link rel="stylesheet" href="style.css" />
-  <script type="module" src="script.js"></script>
+  <script type="module" src="script.js" defer></script>
 </head>
+
 <body>
-  <header>
-    <img src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_official_logo.png" class="logo" alt="CPL Logo">
+  <!-- 🏏 CPL Logo -->
+  <div class="logo-container">
+    <img src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_2022_Logo.png" alt="CPL Logo" class="logo" />
     <h1>Class Premier League</h1>
-  </header>
+  </div>
 
-  <main id="app">
-    <!-- Login / Signup -->
-    <section id="auth-screen">
-      <h2>Login / Sign Up</h2>
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password" />
-      <button id="signup">Sign Up</button>
-      <button id="login">Login</button>
-    </section>
+  <!-- 🔐 Login / Sign-Up Page -->
+  <div id="auth-screen" class="screen active">
+    <h2>Sign Up or Login</h2>
+    <input type="email" id="email" placeholder="Enter Email" />
+    <input type="password" id="password" placeholder="Enter Password" />
+    <button id="signup-btn">Sign Up</button>
+    <button id="login-btn">Login</button>
+  </div>
 
-    <!-- Dashboard -->
-    <section id="dashboard" class="hidden">
+  <!-- 🏠 Main Dashboard -->
+  <div id="main-screen" class="screen">
+    <div class="menu">
+      <button class="menu-btn" id="auction-btn">Auction</button>
+      <button class="menu-btn" id="manage-btn">Manage Squad</button>
+      <button class="menu-btn" id="schedule-btn">Schedule</button>
+      <button class="menu-btn" id="points-btn">Points Table</button>
+      <button class="menu-btn" id="more-btn">More</button>
+    </div>
+
+    <div id="content">
       <h2>Welcome to CPL</h2>
-      <div class="team-select hidden" id="team-select">
-        <h3>Select Your Team</h3>
-        <div class="teams">
-          <button class="team" data-team="RCB"><img src="https://upload.wikimedia.org/wikipedia/en/0/0a/Royal_Challengers_Bangalore_Logo.svg">RCB</button>
-          <button class="team" data-team="CSK"><img src="https://upload.wikimedia.org/wikipedia/en/2/2f/Chennai_Super_Kings_Logo.svg">CSK</button>
-          <button class="team" data-team="MI"><img src="https://upload.wikimedia.org/wikipedia/en/c/cd/Mumbai_Indians_Logo.svg">MI</button>
-          <button class="team" data-team="PBKS"><img src="https://upload.wikimedia.org/wikipedia/en/d/d4/Punjab_Kings_Logo.svg">PBKS</button>
-          <button class="team" data-team="SRH"><img src="https://upload.wikimedia.org/wikipedia/en/8/81/Sunrisers_Hyderabad_Logo.svg">SRH</button>
-          <button class="team" data-team="LSG"><img src="https://upload.wikimedia.org/wikipedia/en/f/f1/Lucknow_Super_Giants_Logo.svg">LSG</button>
-        </div>
-      </div>
+      <p>Select any option above to start your league!</p>
+    </div>
+  </div>
 
-      <!-- Menu Buttons -->
-      <div class="menu">
-        <button id="auction">Auction</button>
-        <button id="manage">Manage Squad</button>
-        <button id="schedule">Schedule</button>
-        <button id="points">Points Table</button>
-        <button id="caps">Caps</button>
-        <button id="rules">Rules</button>
-      </div>
+  <!-- 📢 Sound Effects -->
+  <audio id="auction-sound" src="https://www.myinstants.com/media/sounds/crowd-cheer.mp3"></audio>
+  <audio id="wicket-sound" src="https://www.myinstants.com/media/sounds/cricket-wicket.mp3"></audio>
 
-      <!-- Dynamic Content -->
-      <div id="content"></div>
-    </section>
-  </main>
-
-  <!-- Sound -->
-  <audio id="bidSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
-  <audio id="cheerSound" src="https://actions.google.com/sounds/v1/crowds/medium_crowd_cheer.ogg"></audio>
 </body>
 </html>
