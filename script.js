@@ -1,7 +1,18 @@
-// ✅ Firebase setup
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+// ===============================
+// 🏏 CLASS PREMIER LEAGUE (CPL)
+// script.js — Firebase + Core Logic
+// ===============================
 
+// 1️⃣ Import Firebase SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+// 2️⃣ Firebase Config (same as your project)
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -11,79 +22,99 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
+// 3️⃣ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 🎮 Screen switching
+// 4️⃣ Elements
 const authScreen = document.getElementById("auth-screen");
 const mainScreen = document.getElementById("main-screen");
 
-// 🔐 Sign up
-document.getElementById("signup-btn").addEventListener("click", () => {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-  createUserWithEmailAndPassword(auth, email, pass)
-    .then(() => {
-      alert("Signup successful!");
-      authScreen.classList.remove("active");
-      mainScreen.classList.add("active");
-    })
-    .catch((err) => alert(err.message));
+const signupBtn = document.getElementById("signup-btn");
+const loginBtn = document.getElementById("login-btn");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+// Menu Buttons
+const buttons = document.querySelectorAll(".menu-btn");
+const contentDiv = document.getElementById("content");
+
+// Audio
+const auctionSound = document.getElementById("auction-sound");
+const wicketSound = document.getElementById("wicket-sound");
+
+// 5️⃣ Auth — Sign Up
+signupBtn.addEventListener("click", async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("Sign up successful! 🎉");
+  } catch (error) {
+    alert("Error: " + error.message);
+  }
 });
 
-// 🔑 Login
-document.getElementById("login-btn").addEventListener("click", () => {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-  signInWithEmailAndPassword(auth, email, pass)
-    .then(() => {
-      alert("Login successful!");
-      authScreen.classList.remove("active");
-      mainScreen.classList.add("active");
-    })
-    .catch((err) => alert(err.message));
+// 6️⃣ Auth — Login
+loginBtn.addEventListener("click", async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Login successful ✅");
+  } catch (error) {
+    alert("Login failed: " + error.message);
+  }
 });
 
-// 🏏 Menu buttons
-document.getElementById("auction-btn").addEventListener("click", () => {
-  document.getElementById("content").innerHTML = `
-    <h2>Auction Room</h2>
-    <p>Players will appear automatically. Bid timer: <b>30s</b></p>
-    <p>Purse Left: ₹150 Cr</p>
-  `;
-  document.getElementById("auction-sound").play();
+// 7️⃣ On Auth Change → Switch Screen
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    authScreen.classList.remove("active");
+    authScreen.style.display = "none";
+    mainScreen.classList.add("active");
+    mainScreen.style.display = "block";
+  } else {
+    authScreen.classList.add("active");
+    mainScreen.classList.remove("active");
+  }
 });
 
-document.getElementById("manage-btn").addEventListener("click", () => {
-  document.getElementById("content").innerHTML = `
-    <h2>Manage Squad</h2>
-    <p>Set Captain, WK, and Batting Order here.</p>
-    <button>Trade Center</button>
-  `;
-});
-
-document.getElementById("schedule-btn").addEventListener("click", () => {
-  document.getElementById("content").innerHTML = `
-    <h2>Match Schedule</h2>
-    <p>Upcoming Match: RCB vs MI — <button>PLAY</button></p>
-  `;
-});
-
-document.getElementById("points-btn").addEventListener("click", () => {
-  document.getElementById("content").innerHTML = `
-    <h2>Points Table</h2>
-    <table style="width:90%;margin:auto;color:white;">
-      <tr><th>Team</th><th>P</th><th>W</th><th>L</th><th>Pts</th></tr>
-      <tr><td>RCB</td><td>1</td><td>1</td><td>0</td><td>2</td></tr>
-    </table>
-  `;
-});
-
-document.getElementById("more-btn").addEventListener("click", () => {
-  document.getElementById("content").innerHTML = `
-    <h2>More Options</h2>
-    <button>Caps</button>
-    <button>Team Stats</button>
-    <button>Rules</button>
-  `;
+// 8️⃣ Menu Button Logic
+buttons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = btn.id;
+    if (id === "auction-btn") {
+      contentDiv.innerHTML = `
+        <h2>🧾 Auction Room</h2>
+        <p>Bid for players using your 150 Cr purse.</p>
+        <button id="play-sound">Play Auction Sound</button>
+      `;
+      document.getElementById("play-sound").addEventListener("click", () => auctionSound.play());
+    } 
+    else if (id === "manage-btn") {
+      contentDiv.innerHTML = `
+        <h2>⚙️ Manage Squad</h2>
+        <p>Set captain, keeper, and playing XI order.</p>
+      `;
+    } 
+    else if (id === "schedule-btn") {
+      contentDiv.innerHTML = `
+        <h2>📅 Schedule</h2>
+        <p>Upcoming matches — tap PLAY when both teams are ready!</p>
+      `;
+    } 
+    else if (id === "points-btn") {
+      contentDiv.innerHTML = `
+        <h2>🏆 Points Table</h2>
+        <p>Auto-updated after each match.</p>
+      `;
+    } 
+    else if (id === "more-btn") {
+      contentDiv.innerHTML = `
+        <h2>📋 More Options</h2>
+        <p>Rules, Caps, and Team Stats coming soon...</p>
+      `;
+    }
+  });
 });
