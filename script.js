@@ -1,18 +1,9 @@
-// ===============================
-// 🏏 CLASS PREMIER LEAGUE (CPL)
-// script.js — Firebase + Core Logic
-// ===============================
-
-// 1️⃣ Import Firebase SDKs
+// -------------------- 🔥 Firebase Connection --------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+  from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// 2️⃣ Firebase Config (same as your project)
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -22,99 +13,119 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
-// 3️⃣ Initialize Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// 4️⃣ Elements
+// -------------------- 🔐 Login + Signup --------------------
+const signupBtn = document.getElementById("signup-btn");
+const loginBtn = document.getElementById("login-btn");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
 const authScreen = document.getElementById("auth-screen");
 const mainScreen = document.getElementById("main-screen");
 
-const signupBtn = document.getElementById("signup-btn");
-const loginBtn = document.getElementById("login-btn");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-
-// Menu Buttons
-const buttons = document.querySelectorAll(".menu-btn");
-const contentDiv = document.getElementById("content");
-
-// Audio
-const auctionSound = document.getElementById("auction-sound");
-const wicketSound = document.getElementById("wicket-sound");
-
-// 5️⃣ Auth — Sign Up
 signupBtn.addEventListener("click", async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("Sign up successful! 🎉");
-  } catch (error) {
-    alert("Error: " + error.message);
-  }
-});
-
-// 6️⃣ Auth — Login
-loginBtn.addEventListener("click", async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("Login successful ✅");
-  } catch (error) {
-    alert("Login failed: " + error.message);
-  }
-});
-
-// 7️⃣ On Auth Change → Switch Screen
-onAuthStateChanged(auth, (user) => {
-  if (user) {
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    alert("Sign-up successful! 🎉");
     authScreen.classList.remove("active");
-    authScreen.style.display = "none";
     mainScreen.classList.add("active");
-    mainScreen.style.display = "block";
-  } else {
-    authScreen.classList.add("active");
-    mainScreen.classList.remove("active");
+  } catch (error) {
+    alert(error.message);
   }
 });
 
-// 8️⃣ Menu Button Logic
-buttons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const id = btn.id;
-    if (id === "auction-btn") {
-      contentDiv.innerHTML = `
-        <h2>🧾 Auction Room</h2>
-        <p>Bid for players using your 150 Cr purse.</p>
-        <button id="play-sound">Play Auction Sound</button>
-      `;
-      document.getElementById("play-sound").addEventListener("click", () => auctionSound.play());
-    } 
-    else if (id === "manage-btn") {
-      contentDiv.innerHTML = `
-        <h2>⚙️ Manage Squad</h2>
-        <p>Set captain, keeper, and playing XI order.</p>
-      `;
-    } 
-    else if (id === "schedule-btn") {
-      contentDiv.innerHTML = `
-        <h2>📅 Schedule</h2>
-        <p>Upcoming matches — tap PLAY when both teams are ready!</p>
-      `;
-    } 
-    else if (id === "points-btn") {
-      contentDiv.innerHTML = `
-        <h2>🏆 Points Table</h2>
-        <p>Auto-updated after each match.</p>
-      `;
-    } 
-    else if (id === "more-btn") {
-      contentDiv.innerHTML = `
-        <h2>📋 More Options</h2>
-        <p>Rules, Caps, and Team Stats coming soon...</p>
-      `;
-    }
-  });
+loginBtn.addEventListener("click", async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    alert("Login successful! 👑");
+    authScreen.classList.remove("active");
+    mainScreen.classList.add("active");
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+// -------------------- 🏏 Main Menu Logic --------------------
+const auctionBtn = document.getElementById("auction-btn");
+const manageBtn = document.getElementById("manage-btn");
+const scheduleBtn = document.getElementById("schedule-btn");
+const pointsBtn = document.getElementById("points-btn");
+const moreBtn = document.getElementById("more-btn");
+const teamStatsBtn = document.getElementById("team-stats-btn");
+const content = document.getElementById("content");
+
+auctionBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>🏏 Auction</h2>
+    <p>Start the player auction and build your dream team!</p>
+  `;
+});
+
+manageBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>⚙️ Manage Squad</h2>
+    <p>Add, remove, or edit your team players here.</p>
+  `;
+});
+
+scheduleBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>🗓 Match Schedule</h2>
+    <p>Upcoming match fixtures will appear here soon.</p>
+  `;
+});
+
+pointsBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>🏆 Points Table</h2>
+    <p>Track which team is leading in the CPL!</p>
+  `;
+});
+
+moreBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>ℹ️ More Options</h2>
+    <p>Access rules, help, or about section.</p>
+  `;
+});
+
+// -------------------- 📊 Team Stats --------------------
+teamStatsBtn.addEventListener("click", () => {
+  content.innerHTML = `
+    <h2>🏏 Team Stats</h2>
+    <p>Here you can view your team's performance, runs, wickets, and points!</p>
+    <table>
+      <tr>
+        <th>Team</th>
+        <th>Matches</th>
+        <th>Wins</th>
+        <th>Losses</th>
+        <th>Points</th>
+      </tr>
+      <tr>
+        <td>Team A</td>
+        <td>5</td>
+        <td>3</td>
+        <td>2</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Team B</td>
+        <td>5</td>
+        <td>4</td>
+        <td>1</td>
+        <td>8</td>
+      </tr>
+      <tr>
+        <td>Team C</td>
+        <td>5</td>
+        <td>2</td>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+    </table>
+  `;
 });
