@@ -1,24 +1,66 @@
+/* 🌟 General Page Setup */
 body {
-  margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(to bottom right, #001f3f, #0074d9);
-  color: white;
+  background: linear-gradient(135deg, #0077ff, #00c6ff);
+  color: #222;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  min-height: 100vh;
 }
 
+/* 🏏 Logo Section */
 .logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 20px;
 }
 
 .logo {
-  width: 80px;
+  width: 120px;
   height: auto;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 h1 {
-  margin: 10px 0 30px;
+  font-size: 28px;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
+/* 🔐 Auth Screen */
+#auth-screen {
+  margin-top: 30px;
+}
+
+input {
+  display: block;
+  width: 70%;
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #0077ff;
+  color: white;
+  padding: 10px 20px;
+  margin: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #005dc0;
+}
+
+/* 🏠 Main Dashboard */
 .screen {
   display: none;
 }
@@ -27,47 +69,52 @@ h1 {
   display: block;
 }
 
-input {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  width: 70%;
-  border-radius: 10px;
-  border: none;
-  font-size: 1rem;
-}
-
-button {
-  background-color: #ffcc00;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #ffdb4d;
-}
-
 .menu {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
+  margin: 20px 0;
 }
 
 .menu-btn {
-  flex: 1;
-  margin: 0 5px;
+  background: #ff7300;
+  color: white;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 12px 18px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.menu-btn:hover {
+  background: #ff5500;
+  transform: scale(1.05);
 }
 
 #content {
-  padding-bottom: 80px;
-  }
+  background: white;
+  border-radius: 15px;
+  width: 85%;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+/* 📊 Team Stats Table */
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#content th, #content td {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+#content th {
+  background: #0077ff;
+  color: white;
+}
+
+#content td {
+  background: #f9f9f9;
+}
