@@ -44,5 +44,58 @@
   <audio id="auction-sound" src="https://www.myinstants.com/media/sounds/crowd-cheer.mp3"></audio>
   <audio id="wicket-sound" src="https://www.myinstants.com/media/sounds/cricket-wicket.mp3"></audio>
 
+  <!-- 🔥 Firebase Connection -->
+  <script type="module">
+    // Import Firebase SDK functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    // Firebase Config (same as your project)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+      authDomain: "class-premier-league.firebaseapp.com",
+      projectId: "class-premier-league",
+      storageBucket: "class-premier-league.firebasestorage.app",
+      messagingSenderId: "59210532535",
+      appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Login + Signup Logic
+    const signupBtn = document.getElementById("signup-btn");
+    const loginBtn = document.getElementById("login-btn");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const authScreen = document.getElementById("auth-screen");
+    const mainScreen = document.getElementById("main-screen");
+
+    signupBtn.addEventListener("click", async () => {
+      try {
+        await createUserWithEmailAndPassword(auth, email.value, password.value);
+        alert("Sign-up successful! 🎉");
+        authScreen.classList.remove("active");
+        mainScreen.classList.add("active");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithEmailAndPassword(auth, email.value, password.value);
+        alert("Login successful! 👑");
+        authScreen.classList.remove("active");
+        mainScreen.classList.add("active");
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
 </body>
-</html>
+  </html>
