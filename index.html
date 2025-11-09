@@ -1,102 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Premier League (CPL)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Class Premier League — Phase 1</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module" src="script.js" defer></script>
 </head>
-
 <body>
-  <!-- 🏏 CPL Logo -->
-  <div class="logo-container">
-    <img src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_2022_Logo.png" alt="CPL Logo" class="logo" />
-    <h1>Class Premier League</h1>
+  <div class="wrap">
+
+    <!-- header / logo -->
+    <header class="top">
+      <img class="ipl-logo" src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_2022_Logo.png" alt="CPL Logo">
+      <h1>Class Premier League (CPL)</h1>
+    </header>
+
+    <!-- AUTH -->
+    <section id="auth" class="card">
+      <h2>Sign Up / Login</h2>
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password (min 6)" />
+      <div class="row">
+        <button id="signupBtn" class="primary">Sign Up</button>
+        <button id="loginBtn">Login</button>
+      </div>
+      <div class="muted">Already registered? Login. First time? Sign up & choose your team.</div>
+    </section>
+
+    <!-- TEAM SELECTION (visible after sign-up if user has no team) -->
+    <section id="team-select" class="card hidden">
+      <h2>Select Your Team</h2>
+      <div class="teams-grid" id="teamsGrid"></div>
+      <div class="row">
+        <button id="chooseTeamBtn" class="primary" disabled>Confirm Team</button>
+      </div>
+      <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
+    </section>
+
+    <!-- DASHBOARD (visible after login & team assigned) -->
+    <section id="dashboard" class="card hidden">
+      <h2>Welcome, <span id="userEmail"></span></h2>
+      <div class="info">
+        <div><strong>Your Team:</strong> <span id="yourTeam">—</span></div>
+        <div><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></div>
+      </div>
+      <div class="row">
+        <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
+        <button id="signoutBtn">Sign out</button>
+      </div>
+      <div class="muted">If you want to change team later, use the Manage Squad after auction.</div>
+    </section>
+
+    <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
-
-  <!-- 🔐 Login / Sign-Up Page -->
-  <div id="auth-screen" class="screen active">
-    <h2>Sign Up or Login</h2>
-    <input type="email" id="email" placeholder="Enter Email" />
-    <input type="password" id="password" placeholder="Enter Password" />
-    <button id="signup-btn">Sign Up</button>
-    <button id="login-btn">Login</button>
-  </div>
-
-  <!-- 🏠 Main Dashboard -->
-  <div id="main-screen" class="screen">
-    <div class="menu">
-      <button class="menu-btn" id="auction-btn">Auction</button>
-      <button class="menu-btn" id="manage-btn">Manage Squad</button>
-      <button class="menu-btn" id="schedule-btn">Schedule</button>
-      <button class="menu-btn" id="points-btn">Points Table</button>
-       <button class="menu-btn" id="team-stats-btn">Team Stats</button>
-      <button class="menu-btn" id="more-btn">More</button>
-    </div>
-
-    <div id="content">
-      <h2>Welcome to CPL</h2>
-      <p>Select any option above to start your league!</p>
-    </div>
-  </div>
-
-  <!-- 📢 Sound Effects -->
-  <audio id="auction-sound" src="https://www.myinstants.com/media/sounds/crowd-cheer.mp3"></audio>
-  <audio id="wicket-sound" src="https://www.myinstants.com/media/sounds/cricket-wicket.mp3"></audio>
-
-  <!-- 🔥 Firebase Connection -->
-  <script type="module">
-    // Import Firebase SDK functions
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-    // Firebase Config (same as your project)
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
-      authDomain: "class-premier-league.firebaseapp.com",
-      projectId: "class-premier-league",
-      storageBucket: "class-premier-league.firebasestorage.app",
-      messagingSenderId: "59210532535",
-      appId: "1:59210532535:web:4558b69e94949b65cc6f32"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Login + Signup Logic
-    const signupBtn = document.getElementById("signup-btn");
-    const loginBtn = document.getElementById("login-btn");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const authScreen = document.getElementById("auth-screen");
-    const mainScreen = document.getElementById("main-screen");
-
-    signupBtn.addEventListener("click", async () => {
-      try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
-        alert("Sign-up successful! 🎉");
-        authScreen.classList.remove("active");
-        mainScreen.classList.add("active");
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
-        alert("Login successful! 👑");
-        authScreen.classList.remove("active");
-        mainScreen.classList.add("active");
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-  </script>
 </body>
-  </html>
+        </html>
