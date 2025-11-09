@@ -9,7 +9,6 @@
 <body>
   <div class="wrap">
 
-    <!-- header / logo -->
     <header class="top">
       <img class="ipl-logo" src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_2022_Logo.png" alt="CPL Logo">
       <h1>Class Premier League (CPL)</h1>
@@ -48,13 +47,13 @@
         <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
         <button id="signoutBtn">Sign out</button>
       </div>
-      <div class="muted">If you want to change team later, use the Manage Squad after auction.</div>
+      <div class="muted">If you want to change team later, use Manage Squad after auction.</div>
     </section>
 
     <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
 
-  <!-- ✅ Working Script -->
+  <!-- ✅ Full Working Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
     import { 
@@ -80,13 +79,11 @@
     const authSection = document.getElementById("auth");
     const teamSelectSection = document.getElementById("team-select");
     const dashboardSection = document.getElementById("dashboard");
-
     const emailInput = document.getElementById("email");
     const passInput = document.getElementById("password");
     const signupBtn = document.getElementById("signupBtn");
     const loginBtn = document.getElementById("loginBtn");
     const signoutBtn = document.getElementById("signoutBtn");
-
     const teamsGrid = document.getElementById("teamsGrid");
     const chooseTeamBtn = document.getElementById("chooseTeamBtn");
     const userEmailSpan = document.getElementById("userEmail");
@@ -103,6 +100,7 @@
     ];
 
     const START_PURSE_LAKHS = 15000;
+    let selectedTeamCode = null;
 
     function showSection(sec){
       authSection.classList.add("hidden");
@@ -112,8 +110,7 @@
     }
 
     function lakhToStr(l){
-      if(l >= 100) return "₹" + (l/100).toFixed(2) + " Cr";
-      return "₹" + l.toFixed(2) + " L";
+      return l >= 100 ? `₹${(l/100).toFixed(2)} Cr` : `₹${l.toFixed(2)} L`;
     }
 
     async function renderTeamsGrid(){
@@ -122,78 +119,33 @@
       try{
         const usersCol = collection(db, "users");
         const snap = await getDocs(usersCol);
-        snap.forEach(d=> { const u = d.data(); if(u.team) taken.add(u.team); });
+        snap.forEach(d=>{ const u=d.data(); if(u.team) taken.add(u.team); });
       }catch(e){ console.warn(e); }
 
       TEAMS.forEach(t=>{
         const div = document.createElement("div");
         div.className = "team-card";
         const isTaken = taken.has(t.code);
-        div.innerHTML = `<img src="${t.logo}" alt="${t.code}"><div class="meta"><div class="name">${t.name}</div><div class="code">${t.code} ${isTaken? "— (Taken)": ""}</div></div>`;
-        if(isTaken) div.style.opacity = "0.55";
+        div.innerHTML = `
+          <img src="${t.logo}" alt="${t.code}">
+          <div class="meta">
+            <div class="name">${t.name}</div>
+            <div class="code">${t.code} ${isTaken? "(Taken)": ""}</div>
+          </div>`;
+        if(isTaken) div.style.opacity="0.5";
         div.addEventListener("click", ()=>{
-          if(isTaken) return alert("Sorry — this team is already taken.");
+          if(isTaken) return alert("Sorry, this team is already taken.");
           document.querySelectorAll(".team-card").forEach(c=>c.classList.remove("selected"));
           div.classList.add("selected");
           selectedTeamCode = t.code;
-          chooseTeamBtn.disabled = false;
+          chooseTeamBtn.disabled=false;
         });
         teamsGrid.appendChild(div);
       });
     }
 
-    let selectedTeamCode = null;
-
-    signupBtn.addEventListener("click", async ()=>{
-      const email = emailInput.value.trim();
-      const pass = passInput.value;
-      if(!email || pass.length < 6) return alert("Enter valid email & password (min 6 chars)");
-      try{
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        const uid = cred.user.uid;
-        await setDoc(doc(db, "users", uid), {
-          uid, email, team: null, purse: START_PURSE_LAKHS, players: []
-        });
-        alert("✅ Sign up successful — now choose your team.");
-        await renderTeamsGrid();
-        showSection(teamSelectSection);
-      }catch(err){
-        alert("❌ " + err.message);
-      }
-    });
-
-    loginBtn.addEventListener("click", async ()=>{
-      const email = emailInput.value.trim();
-      const pass = passInput.value;
-      if(!email || pass.length < 6) return alert("Enter valid email & password (min 6 chars)");
-      try{
-        await signInWithEmailAndPassword(auth, email, pass);
-        alert("✅ Logged in successfully!");
-      }catch(err){ alert("❌ " + err.message); }
-    });
-
-    signoutBtn?.addEventListener("click", async ()=>{
-      await signOut(auth);
-      alert("Logged out.");
-      showSection(authSection);
-    });
-
-    chooseTeamBtn.addEventListener("click", async ()=>{
-      if(!selectedTeamCode) return alert("Select a team first!");
-      const user = auth.currentUser;
-      if(!user) return alert("Login first");
-      const uid = user.uid;
-      const userRef = doc(db, "users", uid);
-      const q = query(collection(db, "users"), where("team", "==", selectedTeamCode));
-      const qSnap = await getDocs(q);
-      if(!qSnap.empty) return alert("Someone just took this team!");
-      await updateDoc(userRef, { team: selectedTeamCode });
-      alert("✅ Team selected: " + selectedTeamCode);
-      loadDashboard(uid);
-    });
-
     async function loadDashboard(uid){
-      const uDoc = await getDoc(doc(db, "users", uid));
+      const uDoc = await getDoc(doc(db,"users",uid));
       if(!uDoc.exists()) return;
       const u = uDoc.data();
       userEmailSpan.textContent = u.email;
@@ -203,10 +155,58 @@
       else { await renderTeamsGrid(); showSection(teamSelectSection); }
     }
 
-    onAuthStateChanged(auth, async (user)=>{
-      if(user){ await loadDashboard(user.uid); }
+    signupBtn.addEventListener("click", async ()=>{
+      const email = emailInput.value.trim();
+      const pass = passInput.value;
+      if(!email || pass.length<6) return alert("Enter valid email & password (min 6 chars)");
+      try{
+        const cred = await createUserWithEmailAndPassword(auth,email,pass);
+        const uid = cred.user.uid;
+        await setDoc(doc(db,"users",uid),{
+          uid,email,team:null,purse:START_PURSE_LAKHS,players:[]
+        });
+        alert("✅ Signup successful — choose your team!");
+        await renderTeamsGrid();
+        showSection(teamSelectSection);
+      }catch(e){ alert("❌ "+e.message); }
+    });
+
+    loginBtn.addEventListener("click", async ()=>{
+      const email = emailInput.value.trim();
+      const pass = passInput.value;
+      if(!email || pass.length<6) return alert("Enter valid email & password");
+      try{
+        const cred = await signInWithEmailAndPassword(auth,email,pass);
+        alert("✅ Login successful!");
+        await loadDashboard(cred.user.uid); // 👈 FIX: load dashboard after login
+      }catch(e){ alert("❌ "+e.message); }
+    });
+
+    chooseTeamBtn.addEventListener("click", async ()=>{
+      if(!selectedTeamCode) return alert("Select a team first!");
+      const user = auth.currentUser;
+      if(!user) return alert("Login first");
+      const uid = user.uid;
+      const q = query(collection(db,"users"),where("team","==",selectedTeamCode));
+      const qSnap = await getDocs(q);
+      if(!qSnap.empty) return alert("Someone already took this team!");
+      await updateDoc(doc(db,"users",uid),{team:selectedTeamCode});
+      alert("✅ Team selected: "+selectedTeamCode);
+      await loadDashboard(uid);
+    });
+
+    signoutBtn.addEventListener("click", async ()=>{
+      await signOut(auth);
+      alert("Logged out!");
+      showSection(authSection);
+    });
+
+    onAuthStateChanged(auth, async user=>{
+      if(user) await loadDashboard(user.uid);
       else showSection(authSection);
     });
+
+    renderTeamsGrid();
   </script>
 </body>
-                     </html>
+</html>
