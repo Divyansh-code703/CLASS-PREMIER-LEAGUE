@@ -13,7 +13,7 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// ✅ Your Firebase Config
+// Firebase Config (your own)
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -27,7 +27,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ELEMENTS
 const authSection = document.getElementById("auth");
 const teamSelect = document.getElementById("team-select");
 const dashboard = document.getElementById("dashboard");
@@ -41,67 +40,66 @@ const yourTeamSpan = document.getElementById("yourTeam");
 const chooseTeamBtn = document.getElementById("chooseTeamBtn");
 const teamsGrid = document.getElementById("teamsGrid");
 
-let selectedTeam = "";
-
-// 🟢 TEAM LIST WITH LOGOS
 const teams = [
-  { name: "Mumbai Indians", logo: "https://upload.wikimedia.org/wikipedia/en/2/25/Mumbai_Indians_Logo.svg" },
-  { name: "Chennai Super Kings", logo: "https://upload.wikimedia.org/wikipedia/en/2/2e/Chennai_Super_Kings_Logo.svg" },
-  { name: "Royal Challengers Bangalore", logo: "https://upload.wikimedia.org/wikipedia/en/3/30/Royal_Challengers_Bangalore_Logo.svg" },
-  { name: "Kolkata Knight Riders", logo: "https://upload.wikimedia.org/wikipedia/en/4/4c/Kolkata_Knight_Riders_Logo.svg" },
-  { name: "Gujarat Titans", logo: "https://upload.wikimedia.org/wikipedia/en/8/89/Gujarat_Titans_Logo.svg" },
-  { name: "Sunrisers Hyderabad", logo: "https://upload.wikimedia.org/wikipedia/en/8/81/Sunrisers_Hyderabad_Logo.svg" }
+  { name: "Royal Challengers Bangalore", logo: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
+  { name: "Chennai Super Kings", logo: "chennai-super-kings3461.jpg" },
+  { name: "Kolkata Knight Riders", logo: "778px-Kolkata_Knight_Riders_Logo.svg.png" },
+  { name: "Mumbai Indians", logo: "1200px-Mumbai_Indians_Logo.svg (1).png" },
+  { name: "Lucknow Super Giants", logo: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" },
+  { name: "Sunrisers Hyderabad", logo: "627d11598a632ca996477eb0.png" }
 ];
 
-// 🟢 Render Teams
-teams.forEach(team => {
+let selectedTeam = "";
+
+// Display teams
+teams.forEach(t => {
   const div = document.createElement("div");
   div.className = "team-card";
   div.innerHTML = `
-    <img src="${team.logo}" alt="${team.name}" class="team-logo">
-    <div class="team-name">${team.name}</div>
+    <img src="${t.logo}" alt="${t.name}">
+    <div>${t.name}</div>
   `;
   div.onclick = () => {
     document.querySelectorAll(".team-card").forEach(el => el.classList.remove("selected"));
     div.classList.add("selected");
-    selectedTeam = team.name;
+    selectedTeam = t.name;
     chooseTeamBtn.disabled = false;
   };
   teamsGrid.appendChild(div);
 });
 
-// 🟡 Signup
+// Signup
 signupBtn.onclick = async () => {
   try {
-    const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
-    alert("✅ Signup Successful!");
+    await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
+    alert("Signup Successful!");
   } catch (err) {
-    alert("❌ " + err.message);
+    alert(err.message);
   }
 };
 
-// 🟡 Login
+// Login
 loginBtn.onclick = async () => {
   try {
     await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
-    alert("✅ Login Successful!");
+    alert("Login Successful!");
   } catch (err) {
-    alert("❌ " + err.message);
+    alert(err.message);
   }
 };
 
-// 🟢 Select Team
+// Choose team
 chooseTeamBtn.onclick = async () => {
   const user = auth.currentUser;
   if (!user) return;
-  await setDoc(doc(db, "users", user.uid), { email: user.email, team: selectedTeam });
-  alert(`✅ Team ${selectedTeam} chosen!`);
+  await setDoc(doc(db, "users", user.uid), { team: selectedTeam });
+  alert(`Team ${selectedTeam} chosen!`);
 };
 
-// 🟡 Logout
+// Logout
 signoutBtn.onclick = () => signOut(auth);
 
-// 🟢 Auth State Changes
+// Auth listener
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     authSection.classList.add("hidden");
@@ -109,7 +107,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(ref);
     if (snap.exists()) {
       const data = snap.data();
-      userEmailSpan.textContent = data.email;
+      userEmailSpan.textContent = user.email;
       yourTeamSpan.textContent = data.team;
       teamSelect.classList.add("hidden");
       dashboard.classList.remove("hidden");
