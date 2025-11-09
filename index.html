@@ -2,57 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Class Premier League — Phase 1</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module" src="script.js" defer></script>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
 
-    <!-- Header -->
-    <header class="top">
-      <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo">
+    <header class="header">
+      <img src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" class="logo" />
       <h1>Class Premier League (CPL)</h1>
     </header>
 
-    <!-- AUTH -->
-    <section id="auth" class="card">
-      <h2>Sign Up / Login</h2>
+    <!-- LOGIN / SIGNUP -->
+    <section id="authSection" class="card active">
+      <h2>Login or Sign Up</h2>
       <input id="email" type="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Password (min 6)" />
-      <div class="row">
-        <button id="signupBtn" class="primary">Sign Up</button>
-        <button id="loginBtn">Login</button>
+      <input id="password" type="password" placeholder="Password (min 6 chars)" />
+      <div class="btn-row">
+        <button id="signupBtn" class="btn primary">Sign Up</button>
+        <button id="loginBtn" class="btn">Login</button>
       </div>
-      <div class="muted">Already registered? Login. First time? Sign up & choose your team.</div>
+      <p class="hint">New user → Sign Up | Existing user → Login</p>
     </section>
 
     <!-- TEAM SELECTION -->
-    <section id="team-select" class="card hidden">
+    <section id="teamSection" class="card hidden">
       <h2>Select Your Team</h2>
-      <div class="teams-grid" id="teamsGrid"></div>
-      <div class="row">
-        <button id="chooseTeamBtn" class="primary" disabled>Confirm Team</button>
-      </div>
-      <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
+      <div id="teamsGrid" class="teams-grid"></div>
+      <button id="confirmBtn" class="btn primary" disabled>Confirm Team</button>
+      <p class="hint">Tap a team → Confirm → Dashboard</p>
     </section>
 
     <!-- DASHBOARD -->
-    <section id="dashboard" class="card hidden">
+    <section id="dashboardSection" class="card hidden">
       <h2>Welcome, <span id="userEmail"></span></h2>
-      <div class="info">
-        <div><strong>Your Team:</strong> <span id="yourTeam">—</span></div>
-        <div><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></div>
+      <p><strong>Your Team:</strong> <span id="yourTeam">—</span></p>
+      <p><strong>Purse Left:</strong> ₹150 Cr</p>
+      <div class="btn-row">
+        <button class="btn primary" disabled>Go to Auction</button>
+        <button id="signoutBtn" class="btn">Sign out</button>
       </div>
-      <div class="row">
-        <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
-        <button id="signoutBtn">Sign out</button>
-      </div>
-      <div class="muted">If you want to change team later, use Manage Squad after auction.</div>
     </section>
 
-    <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
+    <footer class="footer">Phase 1 — Login & Team Selection</footer>
   </div>
 </body>
   </html>
