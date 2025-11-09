@@ -1,77 +1,219 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Premier League - Phase 1</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Class Premier League — Phase 1</title>
+  <style>
+    :root{--primary:#0066ff;--bg:#f3f6fa}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.08);width:360px;max-width:95%}
+    .logo{width:84px;height:84px;object-fit:contain;display:block;margin:0 auto 8px}
+    h1,h2{margin:6px 0;text-align:center}
+    input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ddd}
+    .btns{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    button{padding:10px 12px;border-radius:8px;border:0;background:var(--primary);color:#fff;cursor:pointer}
+    button.secondary{background:#ccc;color:#111}
+    p.msg{height:18px;color:#b00;text-align:center;margin:8px 0;font-size:0.95rem}
+    .screen{display:none}
+    .screen.active{display:block}
+    .teams{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+    .team{background:#f6f8ff;border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:transform .12s,box-shadow .12s}
+    .team:hover{transform:translateY(-4px);box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .team img{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto 6px}
+    .main-options{display:flex;gap:8px;flex-direction:column;margin-top:10px}
+    .muted{font-size:0.86rem;color:#555;text-align:center;margin-top:8px}
+    .signout{background:#eee;color:#111}
+  </style>
 </head>
 <body>
+  <div class="card">
 
-  <!-- LOGIN SCREEN -->
-  <div id="login-screen" class="screen active">
-    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo">
-    <h1>Class Premier League</h1>
-
-    <input type="email" id="email" placeholder="Enter Email">
-    <input type="password" id="password" placeholder="Enter Password">
-
-    <div class="btns">
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn" class="secondary">Sign Up</button>
+    <!-- LOGIN -->
+    <div id="login-screen" class="screen active">
+      <img class="logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" onerror="this.style.display='none'">
+      <h1>Class Premier League</h1>
+      <input id="email" type="email" placeholder="Email (example@xyz.com)">
+      <input id="password" type="password" placeholder="Password (min 6)">
+      <div class="btns">
+        <button id="loginBtn">Login</button>
+        <button id="signupBtn" class="secondary">Sign Up</button>
+      </div>
+      <p id="login-message" class="msg"></p>
+      <p class="muted">First time? Sign up. After login you'll pick a team.</p>
     </div>
 
-    <p id="login-message"></p>
-  </div>
-
-  <!-- TEAM SELECTION SCREEN -->
-  <div id="team-screen" class="screen hidden">
-    <h2>Select Your Team</h2>
-    <div class="teams">
-      <div class="team" data-team="RCB">
-        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB Logo">
-        <p>Royal Challengers Bengaluru</p>
+    <!-- TEAM SELECT -->
+    <div id="team-screen" class="screen">
+      <h2>Select Your Team</h2>
+      <div class="teams">
+        <div class="team" data-team="RCB"><img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB"><div>Royal Challengers Bengaluru</div></div>
+        <div class="team" data-team="CSK"><img src="chennai-super-kings3461.jpg" alt="CSK"><div>Chennai Super Kings</div></div>
+        <div class="team" data-team="KKR"><img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR"><div>Kolkata Knight Riders</div></div>
+        <div class="team" data-team="MI"><img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI"><div>Mumbai Indians</div></div>
+        <div class="team" data-team="LSG"><img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG"><div>Lucknow Super Giants</div></div>
+        <div class="team" data-team="SRH"><img src="627d11598a632ca996477eb0.png" alt="SRH"><div>Sunrisers Hyderabad</div></div>
       </div>
+      <p class="muted">Once you pick a team it will be reserved for your account.</p>
+    </div>
 
-      <div class="team" data-team="CSK">
-        <img src="chennai-super-kings3461.jpg" alt="CSK Logo">
-        <p>Chennai Super Kings</p>
-      </div>
+    <!-- MAIN -->
+    <div id="main-screen" class="screen">
+      <h2>Welcome 🎉</h2>
+      <p style="text-align:center">You are representing: <strong id="selected-team-name">—</strong></p>
 
-      <div class="team" data-team="KKR">
-        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR Logo">
-        <p>Kolkata Knight Riders</p>
-      </div>
-
-      <div class="team" data-team="MI">
-        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI Logo">
-        <p>Mumbai Indians</p>
-      </div>
-
-      <div class="team" data-team="LSG">
-        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG Logo">
-        <p>Lucknow Super Giants</p>
-      </div>
-
-      <div class="team" data-team="SRH">
-        <img src="627d11598a632ca996477eb0.png" alt="SRH Logo">
-        <p>Sunrisers Hyderabad</p>
+      <div class="main-options">
+        <button id="startMatchBtn">🏆 Start Match (Coming)</button>
+        <button id="leaderboardBtn">📊 Leaderboard</button>
+        <button id="settingsBtn">⚙️ Settings</button>
+        <button id="signoutBtn" class="signout">Sign out</button>
       </div>
     </div>
+
   </div>
 
-  <!-- MAIN SCREEN (After Team Selection) -->
-  <div id="main-screen" class="screen hidden">
-    <h2>Welcome to Class Premier League!</h2>
-    <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
+  <script type="module">
+  // ----- FIREBASE + UI integrated single-file (replace config below if needed) -----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-    <div class="main-options">
-      <button id="startMatchBtn">🏆 Start Match</button>
-      <button id="leaderboardBtn">📊 Leaderboard</button>
-      <button id="settingsBtn">⚙️ Settings</button>
-    </div>
-  </div>
+  // <- your firebase config (keeps same as you provided)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+    authDomain: "class-premier-league.firebaseapp.com",
+    projectId: "class-premier-league",
+    storageBucket: "class-premier-league.firebasestorage.app",
+    messagingSenderId: "59210532535",
+    appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+  };
 
-  <script type="module" src="script.js"></script>
+  // init
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // UI refs
+  const loginScreen = document.getElementById('login-screen');
+  const teamScreen = document.getElementById('team-screen');
+  const mainScreen = document.getElementById('main-screen');
+  const loginMsg = document.getElementById('login-message');
+  const selectedTeamName = document.getElementById('selected-team-name');
+
+  // helpers
+  function show(screenEl){
+    [loginScreen, teamScreen, mainScreen].forEach(s=>s.classList.remove('active'));
+    screenEl.classList.add('active');
+  }
+  function err(msg){ loginMsg.style.color='crimson'; loginMsg.textContent = msg; console.warn(msg); }
+  function ok(msg){ loginMsg.style.color='green'; loginMsg.textContent = msg; console.log(msg); }
+
+  // SIGNUP
+  document.getElementById('signupBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('password').value.trim();
+    if(!email || pwd.length < 6) return err('Enter valid email & password (min 6).');
+    try{
+      await createUserWithEmailAndPassword(auth, email, pwd);
+      ok('Account created. Now login.');
+    }catch(e){
+      err(e.message || 'Signup failed');
+    }
+  });
+
+  // LOGIN
+  document.getElementById('loginBtn').addEventListener('click', async ()=>{
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('password').value.trim();
+    if(!email || pwd.length < 6) return err('Enter valid email & password (min 6).');
+    try{
+      await signInWithEmailAndPassword(auth, email, pwd);
+      ok('Login ok. Loading...');
+    }catch(e){
+      err(e.message || 'Login failed');
+    }
+  });
+
+  // SIGNOUT
+  document.getElementById('signoutBtn').addEventListener('click', async ()=>{
+    await signOut(auth);
+    ok('Signed out');
+    show(loginScreen);
+  });
+
+  // AUTH STATE: decide which screen to show (team saved -> main, else team select)
+  onAuthStateChanged(auth, async user => {
+    if(!user){
+      show(loginScreen);
+      return;
+    }
+    // user logged in — check users collection for team field
+    try{
+      const userRef = doc(db, 'users', user.uid);
+      const snap = await getDoc(userRef);
+      if(snap.exists() && snap.data().team){
+        selectedTeamName.textContent = snap.data().team;
+        show(mainScreen);
+      } else {
+        show(teamScreen);
+      }
+    }catch(e){
+      console.error('auth check error', e);
+      err('Error checking account — open console');
+    }
+  });
+
+  // TEAM CLICK -> check if already taken -> assign to this user
+  document.querySelectorAll('.team').forEach(teamEl=>{
+    teamEl.addEventListener('click', async ()=>{
+      const teamCode = teamEl.dataset.team;
+      if(!confirm(`Pick ${teamCode}? This will be reserved for your account.`)) return;
+
+      // check if any user has this team
+      try{
+        const q = query(collection(db, 'users'), where('team', '==', teamCode));
+        const snap = await getDocs(q);
+        if(!snap.empty){
+          alert('Sorry — this team is already taken by another player.');
+          return;
+        }
+
+        const user = auth.currentUser;
+        if(!user){
+          alert('Login expired — please login again.');
+          show(loginScreen);
+          return;
+        }
+
+        // save to Firestore
+        await setDoc(doc(db, 'users', user.uid), { email: user.email, team: teamCode });
+        selectedTeamName.textContent = teamCode;
+        alert(`Success! You joined ${teamCode}`);
+        show(mainScreen);
+      }catch(e){
+        console.error('team selection error', e);
+        alert('Error during team selection — check console');
+      }
+    });
+  });
+
+  // initial UI
+  show(loginScreen);
+  </script>
 </body>
 </html>
