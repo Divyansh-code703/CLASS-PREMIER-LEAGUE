@@ -1,6 +1,5 @@
-  // Firebase setup
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
@@ -14,34 +13,45 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Login functionality
-const loginBtn = document.getElementById("loginBtn");
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const loginMsg = document.getElementById("login-message");
 
-loginBtn.addEventListener("click", async () => {
+// Login
+document.getElementById("loginBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    loginMsg.style.color = "green";
     loginMsg.textContent = "Login successful!";
     setTimeout(() => {
       loginScreen.classList.remove("active");
       teamScreen.classList.add("active");
     }, 1000);
-  } catch (error) {
-    loginMsg.textContent = "Invalid email or password!";
+  } catch {
+    loginMsg.textContent = "Invalid email or password.";
+  }
+});
+
+// Signup
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    loginMsg.style.color = "green";
+    loginMsg.textContent = "Account created! You can now log in.";
+  } catch {
+    loginMsg.textContent = "Error creating account. Try again.";
   }
 });
 
 // Team selection
-const teams = document.querySelectorAll(".team");
-teams.forEach(team => {
+document.querySelectorAll(".team").forEach(team => {
   team.addEventListener("click", () => {
-    teams.forEach(t => t.style.border = "none");
+    document.querySelectorAll(".team").forEach(t => t.style.border = "none");
     team.style.border = "3px solid #007bff";
-    alert("Team selected: " + team.dataset.team);
+    alert("You selected " + team.dataset.team + " 🏏");
   });
 });
