@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Premier League - Phase 1</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Premier League (CPL)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
-  <div id="login-screen" class="screen active">
-    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo">
-    <h1>Class Premier League</h1>
+    <script type="module">
+        // Firebase Configuration (Aapka code)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+            authDomain: "class-premier-league.firebaseapp.com",
+            projectId: "class-premier-league",
+            storageBucket: "class-premier-league.firebasestorage.app",
+            messagingSenderId: "59210532535",
+            appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+        };
+        
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, set, update, get } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-    <input type="email" id="email" placeholder="Enter Email">
-    <input type="password" id="password" placeholder="Enter Password">
+        // Making Firebase variables globally accessible in script.js
+        window.firebaseApp = app;
+        window.firebaseAuth = auth;
+        window.firebaseDB = db;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseSignIn = signInWithEmailAndPassword;
+        window.firebaseSignUp = createUserWithEmailAndPassword;
+        window.firebaseSignOut = signOut;
+        window.firebaseRef = ref;
+        window.firebaseOnValue = onValue;
+        window.firebaseSet = set;
+        window.firebaseUpdate = update;
+        window.firebaseGet = get;
 
-    <div class="btns">
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn" class="secondary">Sign Up</button>
+        console.log("Firebase Initialized and variables exported.");
+    </script>
+
+    <div id="app-container">
+        
+        <div id="screen-container">
+            </div>
+
+        <div id="nav-bar">
+            </div>
     </div>
-
-    <p id="login-message"></p>
-  </div>
-
-  <!-- TEAM SELECTION SCREEN -->
-  <div id="team-screen" class="screen">
-    <h2>Select Your Team</h2>
-    <div class="teams">
-      <div class="team" data-team="RCB">
-        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB">
-        <p>RCB</p>
-      </div>
-      <div class="team" data-team="CSK">
-        <img src="chennai-super-kings3461.jpg" alt="CSK">
-        <p>CSK</p>
-      </div>
-      <div class="team" data-team="KKR">
-        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR">
-        <p>KKR</p>
-      </div>
-      <div class="team" data-team="MI">
-        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI">
-        <p>MI</p>
-      </div>
-      <div class="team" data-team="LSG">
-        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG">
-        <p>LSG</p>
-      </div>
-      <div class="team" data-team="SRH">
-        <img src="627d11598a632ca996477eb0.png" alt="SRH">
-        <p>SRH</p>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="script.js"></script>
+    
+    <script src="script.js" type="module"></script>
 </body>
 </html>
