@@ -1,120 +1,64 @@
-/* 🌟 General Page Setup */
-body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #0077ff, #00c6ff);
-  color: #222;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-  min-height: 100vh;
+
+:root{
+  --bg1:#04142b; --bg2:#05305b; --card:#071a3a; --accent:#ffb400; --muted:rgba(255,255,255,0.7);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh;
+  font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.wrap{width:100%;max-width:920px}
+.top{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.ipl-logo{width:64px;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+h1{font-size:20px;margin:0}
+
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.45);
 }
 
-/* 🏏 Logo Section */
-.logo-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+input{
+  width:100%; padding:10px 12px; margin:8px 0;
+  border-radius:8px; border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.03); color:#fff;
 }
 
-.logo {
-  width: 120px;
-  height: auto;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-}
+.row{display:flex; gap:8px; justify-content:center; margin-top:10px}
+button{cursor:pointer;padding:10px 14px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);color:#fff}
+button.primary{background:var(--accent); color:#091222; font-weight:700}
+.muted{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
 
-h1 {
-  font-size: 28px;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-}
+.hidden{display:none}
 
-/* 🔐 Auth Screen */
-#auth-screen {
-  margin-top: 30px;
+/* teams grid */
+.teams-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.team-card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+  display:flex;align-items:center;gap:10px;cursor:pointer;transition:transform .15s, box-shadow .15s;
 }
+.team-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.5)}
+.team-card img{width:42px;height:42px;border-radius:8px;object-fit:contain}
+.team-card .meta{flex:1;text-align:left}
+.team-card .meta .name{font-weight:700}
+.team-card .meta .code{font-size:12px;color:var(--muted)}
 
-input {
-  display: block;
-  width: 70%;
-  max-width: 300px;
-  margin: 10px auto;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
+/* selected */
+.team-card.selected{outline:3px solid rgba(255,180,0,0.2);box-shadow:0 8px 30px rgba(255,180,0,0.06)}
 
-button {
-  background-color: #0077ff;
-  color: white;
-  padding: 10px 20px;
-  margin: 8px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+/* dashboard info */
+.info{display:flex;gap:20px;justify-content:center;margin:12px 0}
+.info div{background:rgba(0,0,0,0.2);padding:8px 12px;border-radius:8px}
 
-button:hover {
-  background-color: #005dc0;
-}
-
-/* 🏠 Main Dashboard */
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-.menu {
-  margin: 20px 0;
-}
-
-.menu-btn {
-  background: #ff7300;
-  color: white;
-  border-radius: 10px;
-  margin: 5px;
-  padding: 12px 18px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.menu-btn:hover {
-  background: #ff5500;
-  transform: scale(1.05);
-}
-
-#content {
-  background: white;
-  border-radius: 15px;
-  width: 85%;
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
-}
-
-/* 📊 Team Stats Table */
-#content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-#content th, #content td {
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-#content th {
-  background: #0077ff;
-  color: white;
-}
-
-#content td {
-  background: #f9f9f9;
+/* small / responsive */
+@media (max-width:640px){
+  .teams-grid{grid-template-columns:repeat(2,1fr)}
+  .info{flex-direction:column;align-items:center}
 }
