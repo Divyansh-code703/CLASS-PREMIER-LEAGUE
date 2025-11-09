@@ -6,17 +6,18 @@
   <title>Class Premier League — Phase 1</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="wrap">
 
-    <!-- HEADER -->
+    <!-- 🏏 HEADER -->
     <header class="top">
-      <!-- 👇 Your Official CPL Logo -->
+      <!-- 👇 Your official CPL logo -->
       <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" style="width:90px;height:90px;">
       <h1>Class Premier League (CPL)</h1>
     </header>
 
-    <!-- AUTH SECTION -->
+    <!-- 🔐 AUTH SECTION -->
     <section id="auth" class="card">
       <h2>Sign Up / Login</h2>
       <input id="email" type="email" placeholder="Email" />
@@ -25,10 +26,12 @@
         <button id="signupBtn" class="primary">Sign Up</button>
         <button id="loginBtn">Login</button>
       </div>
-      <div class="muted">Already registered? Login. First time? Sign up & choose your team.</div>
+      <div class="muted">
+        Already registered? Login. First time? Sign up & choose your team.
+      </div>
     </section>
 
-    <!-- TEAM SELECTION SECTION -->
+    <!-- 🏏 TEAM SELECTION -->
     <section id="team-select" class="card hidden">
       <h2>Select Your Team</h2>
       <div class="teams-grid" id="teamsGrid"></div>
@@ -38,7 +41,7 @@
       <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
     </section>
 
-    <!-- DASHBOARD SECTION -->
+    <!-- 🏠 DASHBOARD -->
     <section id="dashboard" class="card hidden">
       <h2>Welcome, <span id="userEmail"></span></h2>
       <div class="info">
@@ -47,7 +50,7 @@
       </div>
       <div class="row">
         <button id="goAuction" class="primary" disabled>Go to Auction (coming soon)</button>
-        <button id="signoutBtn">Sign out</button>
+        <button id="signoutBtn">Sign Out</button>
       </div>
       <div class="muted">You can manage your team after the auction phase.</div>
     </section>
@@ -55,12 +58,19 @@
     <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
 
-  <!-- ✅ Working JS -->
+  <!-- ⚙️ WORKING SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+    import {
+      getAuth, createUserWithEmailAndPassword,
+      signInWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc, updateDoc,
+      collection, query, where, getDocs
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
+    // 🔥 Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
       authDomain: "class-premier-league.firebaseapp.com",
@@ -70,10 +80,12 @@
       appId: "1:59210532535:web:4558b69e94949b65cc6f32"
     };
 
+    // 🔧 Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // 📦 DOM Elements
     const authSection = document.getElementById("auth");
     const teamSelectSection = document.getElementById("team-select");
     const dashboardSection = document.getElementById("dashboard");
@@ -91,7 +103,7 @@
     const TEAMS = [
       { code: "RCB", name: "Royal Challengers Bengaluru", logo: "https://upload.wikimedia.org/wikipedia/en/0/0b/Royal_Challengers_Bengaluru_Logo.svg" },
       { code: "CSK", name: "Chennai Super Kings", logo: "https://upload.wikimedia.org/wikipedia/en/9/9d/Chennai_Super_Kings_Logo.svg" },
-      { code: "MI",  name: "Mumbai Indians", logo: "https://upload.wikimedia.org/wikipedia/en/3/3d/Mumbai_Indians_Logo.svg" },
+      { code: "MI", name: "Mumbai Indians", logo: "https://upload.wikimedia.org/wikipedia/en/3/3d/Mumbai_Indians_Logo.svg" },
       { code: "LSG", name: "Lucknow Super Giants", logo: "https://upload.wikimedia.org/wikipedia/en/8/8b/Lucknow_Super_Giants_Logo.svg" },
       { code: "PBKS", name: "Punjab Kings", logo: "https://upload.wikimedia.org/wikipedia/en/1/1b/Punjab_Kings_Logo.svg" },
       { code: "SRH", name: "Sunrisers Hyderabad", logo: "https://upload.wikimedia.org/wikipedia/en/1/19/Sunrisers_Hyderabad_Logo.svg" }
@@ -101,9 +113,7 @@
     let selectedTeamCode = null;
 
     function showSection(sec) {
-      authSection.classList.add("hidden");
-      teamSelectSection.classList.add("hidden");
-      dashboardSection.classList.add("hidden");
+      [authSection, teamSelectSection, dashboardSection].forEach(s => s.classList.add("hidden"));
       sec.classList.remove("hidden");
     }
 
@@ -161,6 +171,7 @@
       }
     }
 
+    // ✳️ SIGN-UP
     signupBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const pass = passInput.value;
@@ -168,7 +179,9 @@
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
         const uid = cred.user.uid;
-        await setDoc(doc(db, "users", uid), { uid, email, team: null, purse: START_PURSE_LAKHS, players: [] });
+        await setDoc(doc(db, "users", uid), {
+          uid, email, team: null, purse: START_PURSE_LAKHS, players: []
+        });
         alert("✅ Signup successful — choose your team!");
         await renderTeamsGrid();
         showSection(teamSelectSection);
@@ -177,6 +190,7 @@
       }
     });
 
+    // ✳️ LOGIN
     loginBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const pass = passInput.value;
@@ -184,12 +198,13 @@
       try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
         alert("✅ Login successful!");
-        await loadDashboard(cred.user.uid); // ✅ FIXED: move to next page
+        await loadDashboard(cred.user.uid);
       } catch (e) {
         alert("❌ " + e.message);
       }
     });
 
+    // ✳️ TEAM SELECTION
     chooseTeamBtn.addEventListener("click", async () => {
       if (!selectedTeamCode) return alert("Select a team first!");
       const user = auth.currentUser;
@@ -203,18 +218,18 @@
       await loadDashboard(uid);
     });
 
+    // ✳️ SIGN OUT
     signoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       alert("Logged out!");
       showSection(authSection);
     });
 
+    // 👇 FIXED — no extra renderTeamsGrid() outside
     onAuthStateChanged(auth, async (user) => {
       if (user) await loadDashboard(user.uid);
       else showSection(authSection);
     });
-
-    renderTeamsGrid();
   </script>
 </body>
-</html>
+                                                 </html>
