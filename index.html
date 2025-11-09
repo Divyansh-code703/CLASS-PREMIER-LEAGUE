@@ -1,162 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Premier League (CPL) — Phase 1</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1b1b2f, #2b2b45);
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #111;
-      padding: 15px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    img.logo {
-      width: 120px;
-      height: auto;
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      background: #ffca28;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    button:hover {
-      background: #ffd95b;
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      text-align: left;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    .popup input {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
-    }
-    .team-selection {
-      display: none;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    .team-card {
-      display: inline-block;
-      background: #222;
-      margin: 15px;
-      padding: 15px;
-      border-radius: 10px;
-      width: 150px;
-      transition: transform 0.3s;
-    }
-    .team-card:hover {
-      transform: scale(1.05);
-      background: #333;
-    }
-    .team-card img {
-      width: 100px;
-      height: 100px;
-      object-fit: contain;
-      border-radius: 10px;
-    }
-    .team-card h3 {
-      color: #ffca28;
-      font-size: 15px;
-      margin-top: 8px;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Class Premier League — Phase 1</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="script.js" defer></script>
 </head>
 <body>
-  <header>Class Premier League (CPL)</header>
-  <img src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" class="logo" />
+  <div class="wrap">
+    <header class="top">
+      <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo">
+      <h1>Class Premier League (CPL)</h1>
+    </header>
 
-  <button id="loginBtn">Login</button>
+    <!-- AUTH -->
+    <section id="auth" class="card">
+      <h2>Sign Up / Login</h2>
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password (min 6)" />
+      <div class="row">
+        <button id="signupBtn" class="primary">Sign Up</button>
+        <button id="loginBtn">Login</button>
+      </div>
+      <div class="muted">
+        Already registered? Login. First time? Sign up & choose your team.
+      </div>
+    </section>
 
-  <div id="loginPopup" class="popup">
-    <h2>Login</h2>
-    <input type="email" id="email" placeholder="Enter email" />
-    <input type="password" id="password" placeholder="Enter password" />
-    <button id="loginSubmit">Login</button>
+    <!-- TEAM SELECTION -->
+    <section id="team-select" class="card hidden">
+      <h2>Select Your Team</h2>
+      <div class="teams-grid" id="teamsGrid"></div>
+      <div class="row">
+        <button id="chooseTeamBtn" class="primary" disabled>Confirm Team</button>
+      </div>
+      <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="card hidden">
+      <h2>Welcome, <span id="userEmail"></span></h2>
+      <div class="info">
+        <div><strong>Your Team:</strong> <span id="yourTeam">—</span></div>
+        <div><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></div>
+      </div>
+      <div class="row">
+        <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
+        <button id="signoutBtn">Sign out</button>
+      </div>
+      <div class="muted">You can manage your team after the auction phase.</div>
+    </section>
+
+    <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
-
-  <div id="teamContainer" class="team-selection"></div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
-      authDomain: "class-premier-league.firebaseapp.com",
-      projectId: "class-premier-league",
-      storageBucket: "class-premier-league.firebasestorage.app",
-      messagingSenderId: "59210532535",
-      appId: "1:59210532535:web:4558b69e94949b65cc6f32"
-    };
-    const app = initializeApp(firebaseConfig);
-
-    const loginBtn = document.getElementById("loginBtn");
-    const loginPopup = document.getElementById("loginPopup");
-    const loginSubmit = document.getElementById("loginSubmit");
-    const teamContainer = document.getElementById("teamContainer");
-
-    loginBtn.addEventListener("click", () => {
-      loginPopup.style.display = "block";
-    });
-
-    loginSubmit.addEventListener("click", () => {
-      loginPopup.style.display = "none";
-      loginBtn.style.display = "none";
-      console.log("✅ Login simulated, loading teams...");
-      loadTeams();
-    });
-
-    function loadTeams() {
-      teamContainer.innerHTML = ""; // clear old
-      teamContainer.style.display = "block";
-
-      const teams = [
-        { name: "Royal Challengers Bengaluru", logo: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
-        { name: "Chennai Super Kings", logo: "chennai-super-kings3461.jpg" },
-        { name: "Kolkata Knight Riders", logo: "778px-Kolkata_Knight_Riders_Logo.svg.png" },
-        { name: "Mumbai Indians", logo: "1200px-Mumbai_Indians_Logo.svg_1.png" },
-        { name: "Lucknow Super Giants", logo: "1200px-Lucknow_Super_Giants_IPL_Logo.svg_1.png" },
-        { name: "Sunrisers Hyderabad", logo: "627d11598a632ca996477eb0.png" }
-      ];
-
-      console.log("📦 Loading team cards...");
-      teams.forEach(t => {
-        console.log("→", t.name, "|", t.logo);
-        const div = document.createElement("div");
-        div.className = "team-card";
-        div.innerHTML = `
-          <img src="${t.logo}" alt="${t.name}" onerror="this.style.display='none'">
-          <h3>${t.name}</h3>
-        `;
-        teamContainer.appendChild(div);
-      });
-
-      console.log("✅ Teams loaded into container!");
-    }
-  </script>
 </body>
 </html>
