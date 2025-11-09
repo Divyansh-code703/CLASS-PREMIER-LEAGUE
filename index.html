@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Class Premier League — Phase 1</title>
   <link rel="stylesheet" href="style.css" />
+  <script type="module" src="script.js" defer></script>
 </head>
 <body>
   <div class="wrap">
-    <!-- HEADER -->
+
+    <!-- Header -->
     <header class="top">
-      <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" />
+      <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo">
       <h1>Class Premier League (CPL)</h1>
     </header>
 
@@ -23,30 +25,38 @@
         <button id="signupBtn" class="primary">Sign Up</button>
         <button id="loginBtn">Login</button>
       </div>
-      <p class="muted">Already registered? Login. First time? Sign up and choose your team.</p>
+      <div class="muted">
+        Already registered? Login. First time? Sign up & choose your team.
+      </div>
     </section>
 
     <!-- TEAM SELECTION -->
     <section id="team-select" class="card hidden">
       <h2>Select Your Team</h2>
       <div class="teams-grid" id="teamsGrid"></div>
-      <button id="chooseTeamBtn" class="primary" disabled>Confirm Team</button>
+      <div class="row">
+        <button id="chooseTeamBtn" class="primary" disabled>Confirm Team</button>
+      </div>
+      <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
     </section>
 
     <!-- DASHBOARD -->
     <section id="dashboard" class="card hidden">
       <h2>Welcome, <span id="userEmail"></span></h2>
-      <p><strong>Your Team:</strong> <span id="yourTeam">—</span></p>
-      <p><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></p>
+      <div class="info">
+        <div><strong>Your Team:</strong> <span id="yourTeam">—</span></div>
+        <div><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></div>
+      </div>
       <div class="row">
         <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
-        <button id="signoutBtn">Sign Out</button>
+        <button id="signoutBtn">Sign out</button>
+      </div>
+      <div class="muted">
+        If you want to change team later, use Manage Squad after auction.
       </div>
     </section>
 
     <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
-
-  <script type="module" src="script.js"></script>
 </body>
-</html>
+  </html>
