@@ -9,12 +9,14 @@
 <body>
   <div class="wrap">
 
+    <!-- HEADER -->
     <header class="top">
-      <img class="ipl-logo" src="https://upload.wikimedia.org/wikipedia/en/d/d7/IPL_2022_Logo.png" alt="CPL Logo">
+      <!-- 👇 Your Official CPL Logo -->
+      <img class="ipl-logo" src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" style="width:90px;height:90px;">
       <h1>Class Premier League (CPL)</h1>
     </header>
 
-    <!-- AUTH -->
+    <!-- AUTH SECTION -->
     <section id="auth" class="card">
       <h2>Sign Up / Login</h2>
       <input id="email" type="email" placeholder="Email" />
@@ -26,7 +28,7 @@
       <div class="muted">Already registered? Login. First time? Sign up & choose your team.</div>
     </section>
 
-    <!-- TEAM SELECTION -->
+    <!-- TEAM SELECTION SECTION -->
     <section id="team-select" class="card hidden">
       <h2>Select Your Team</h2>
       <div class="teams-grid" id="teamsGrid"></div>
@@ -36,7 +38,7 @@
       <div class="muted">Once a team is chosen, it will be reserved for your account.</div>
     </section>
 
-    <!-- DASHBOARD -->
+    <!-- DASHBOARD SECTION -->
     <section id="dashboard" class="card hidden">
       <h2>Welcome, <span id="userEmail"></span></h2>
       <div class="info">
@@ -44,24 +46,20 @@
         <div><strong>Purse Left:</strong> <span id="yourPurse">₹150.00 Cr</span></div>
       </div>
       <div class="row">
-        <button id="goAuction" class="primary" disabled>Go to Auction (coming next)</button>
+        <button id="goAuction" class="primary" disabled>Go to Auction (coming soon)</button>
         <button id="signoutBtn">Sign out</button>
       </div>
-      <div class="muted">If you want to change team later, use Manage Squad after auction.</div>
+      <div class="muted">You can manage your team after the auction phase.</div>
     </section>
 
     <footer class="footer muted">Phase 1 — Login & Team Selection</footer>
   </div>
 
-  <!-- ✅ Full Working Script -->
+  <!-- ✅ Working JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-    import { 
-      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-    import { 
-      getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs 
-    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
@@ -95,34 +93,39 @@
       { code: "CSK", name: "Chennai Super Kings", logo: "https://upload.wikimedia.org/wikipedia/en/9/9d/Chennai_Super_Kings_Logo.svg" },
       { code: "MI",  name: "Mumbai Indians", logo: "https://upload.wikimedia.org/wikipedia/en/3/3d/Mumbai_Indians_Logo.svg" },
       { code: "LSG", name: "Lucknow Super Giants", logo: "https://upload.wikimedia.org/wikipedia/en/8/8b/Lucknow_Super_Giants_Logo.svg" },
-      { code: "PBKS",name: "Punjab Kings", logo: "https://upload.wikimedia.org/wikipedia/en/1/1b/Punjab_Kings_Logo.svg" },
+      { code: "PBKS", name: "Punjab Kings", logo: "https://upload.wikimedia.org/wikipedia/en/1/1b/Punjab_Kings_Logo.svg" },
       { code: "SRH", name: "Sunrisers Hyderabad", logo: "https://upload.wikimedia.org/wikipedia/en/1/19/Sunrisers_Hyderabad_Logo.svg" }
     ];
 
     const START_PURSE_LAKHS = 15000;
     let selectedTeamCode = null;
 
-    function showSection(sec){
+    function showSection(sec) {
       authSection.classList.add("hidden");
       teamSelectSection.classList.add("hidden");
       dashboardSection.classList.add("hidden");
       sec.classList.remove("hidden");
     }
 
-    function lakhToStr(l){
-      return l >= 100 ? `₹${(l/100).toFixed(2)} Cr` : `₹${l.toFixed(2)} L`;
+    function lakhToStr(l) {
+      return l >= 100 ? `₹${(l / 100).toFixed(2)} Cr` : `₹${l.toFixed(2)} L`;
     }
 
-    async function renderTeamsGrid(){
+    async function renderTeamsGrid() {
       teamsGrid.innerHTML = "";
       const taken = new Set();
-      try{
+      try {
         const usersCol = collection(db, "users");
         const snap = await getDocs(usersCol);
-        snap.forEach(d=>{ const u=d.data(); if(u.team) taken.add(u.team); });
-      }catch(e){ console.warn(e); }
+        snap.forEach(d => {
+          const u = d.data();
+          if (u.team) taken.add(u.team);
+        });
+      } catch (e) {
+        console.warn(e);
+      }
 
-      TEAMS.forEach(t=>{
+      TEAMS.forEach(t => {
         const div = document.createElement("div");
         div.className = "team-card";
         const isTaken = taken.has(t.code);
@@ -130,79 +133,84 @@
           <img src="${t.logo}" alt="${t.code}">
           <div class="meta">
             <div class="name">${t.name}</div>
-            <div class="code">${t.code} ${isTaken? "(Taken)": ""}</div>
+            <div class="code">${t.code} ${isTaken ? "(Taken)" : ""}</div>
           </div>`;
-        if(isTaken) div.style.opacity="0.5";
-        div.addEventListener("click", ()=>{
-          if(isTaken) return alert("Sorry, this team is already taken.");
-          document.querySelectorAll(".team-card").forEach(c=>c.classList.remove("selected"));
+        if (isTaken) div.style.opacity = "0.5";
+        div.addEventListener("click", () => {
+          if (isTaken) return alert("Sorry, this team is already taken.");
+          document.querySelectorAll(".team-card").forEach(c => c.classList.remove("selected"));
           div.classList.add("selected");
           selectedTeamCode = t.code;
-          chooseTeamBtn.disabled=false;
+          chooseTeamBtn.disabled = false;
         });
         teamsGrid.appendChild(div);
       });
     }
 
-    async function loadDashboard(uid){
-      const uDoc = await getDoc(doc(db,"users",uid));
-      if(!uDoc.exists()) return;
+    async function loadDashboard(uid) {
+      const uDoc = await getDoc(doc(db, "users", uid));
+      if (!uDoc.exists()) return;
       const u = uDoc.data();
       userEmailSpan.textContent = u.email;
       yourTeamSpan.textContent = u.team || "No team yet";
       yourPurseSpan.textContent = lakhToStr(u.purse);
-      if(u.team) showSection(dashboardSection);
-      else { await renderTeamsGrid(); showSection(teamSelectSection); }
+      if (u.team) showSection(dashboardSection);
+      else {
+        await renderTeamsGrid();
+        showSection(teamSelectSection);
+      }
     }
 
-    signupBtn.addEventListener("click", async ()=>{
+    signupBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const pass = passInput.value;
-      if(!email || pass.length<6) return alert("Enter valid email & password (min 6 chars)");
-      try{
-        const cred = await createUserWithEmailAndPassword(auth,email,pass);
+      if (!email || pass.length < 6) return alert("Enter valid email & password (min 6 chars)");
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
         const uid = cred.user.uid;
-        await setDoc(doc(db,"users",uid),{
-          uid,email,team:null,purse:START_PURSE_LAKHS,players:[]
-        });
+        await setDoc(doc(db, "users", uid), { uid, email, team: null, purse: START_PURSE_LAKHS, players: [] });
         alert("✅ Signup successful — choose your team!");
         await renderTeamsGrid();
         showSection(teamSelectSection);
-      }catch(e){ alert("❌ "+e.message); }
+      } catch (e) {
+        alert("❌ " + e.message);
+      }
     });
 
-    loginBtn.addEventListener("click", async ()=>{
+    loginBtn.addEventListener("click", async () => {
       const email = emailInput.value.trim();
       const pass = passInput.value;
-      if(!email || pass.length<6) return alert("Enter valid email & password");
-      try{
-        const cred = await signInWithEmailAndPassword(auth,email,pass);
+      if (!email || pass.length < 6) return alert("Enter valid email & password");
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
         alert("✅ Login successful!");
-        await loadDashboard(cred.user.uid); // 👈 FIX: load dashboard after login
-      }catch(e){ alert("❌ "+e.message); }
+        await loadDashboard(cred.user.uid); // ✅ FIXED: move to next page
+      } catch (e) {
+        alert("❌ " + e.message);
+      }
     });
 
-    chooseTeamBtn.addEventListener("click", async ()=>{
-      if(!selectedTeamCode) return alert("Select a team first!");
+    chooseTeamBtn.addEventListener("click", async () => {
+      if (!selectedTeamCode) return alert("Select a team first!");
       const user = auth.currentUser;
-      if(!user) return alert("Login first");
+      if (!user) return alert("Login first");
       const uid = user.uid;
-      const q = query(collection(db,"users"),where("team","==",selectedTeamCode));
+      const q = query(collection(db, "users"), where("team", "==", selectedTeamCode));
       const qSnap = await getDocs(q);
-      if(!qSnap.empty) return alert("Someone already took this team!");
-      await updateDoc(doc(db,"users",uid),{team:selectedTeamCode});
-      alert("✅ Team selected: "+selectedTeamCode);
+      if (!qSnap.empty) return alert("Someone already took this team!");
+      await updateDoc(doc(db, "users", uid), { team: selectedTeamCode });
+      alert("✅ Team selected: " + selectedTeamCode);
       await loadDashboard(uid);
     });
 
-    signoutBtn.addEventListener("click", async ()=>{
+    signoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       alert("Logged out!");
       showSection(authSection);
     });
 
-    onAuthStateChanged(auth, async user=>{
-      if(user) await loadDashboard(user.uid);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) await loadDashboard(user.uid);
       else showSection(authSection);
     });
 
