@@ -13,7 +13,7 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// Firebase Config (your own)
+// 🔥 Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -41,24 +41,20 @@ const chooseTeamBtn = document.getElementById("chooseTeamBtn");
 const teamsGrid = document.getElementById("teamsGrid");
 
 const teams = [
-  { name: "Royal Challengers Bangalore", logo: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
+  { name: "Royal Challengers Bengaluru", logo: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
   { name: "Chennai Super Kings", logo: "chennai-super-kings3461.jpg" },
   { name: "Kolkata Knight Riders", logo: "778px-Kolkata_Knight_Riders_Logo.svg.png" },
   { name: "Mumbai Indians", logo: "1200px-Mumbai_Indians_Logo.svg (1).png" },
   { name: "Lucknow Super Giants", logo: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" },
   { name: "Sunrisers Hyderabad", logo: "627d11598a632ca996477eb0.png" }
 ];
-
 let selectedTeam = "";
 
-// Display teams
+// render teams
 teams.forEach(t => {
   const div = document.createElement("div");
   div.className = "team-card";
-  div.innerHTML = `
-    <img src="${t.logo}" alt="${t.name}">
-    <div>${t.name}</div>
-  `;
+  div.innerHTML = `<img src="${t.logo}" alt="${t.name}"><div>${t.name}</div>`;
   div.onclick = () => {
     document.querySelectorAll(".team-card").forEach(el => el.classList.remove("selected"));
     div.classList.add("selected");
@@ -71,49 +67,46 @@ teams.forEach(t => {
 // Signup
 signupBtn.onclick = async () => {
   try {
-    await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
-    alert("Signup Successful!");
-  } catch (err) {
-    alert(err.message);
-  }
+    const cred = await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
+    alert("Signup successful!");
+  } catch (e) { alert(e.message); }
 };
 
 // Login
 loginBtn.onclick = async () => {
   try {
     await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
-    alert("Login Successful!");
-  } catch (err) {
-    alert(err.message);
-  }
+    alert("Login successful!");
+  } catch (e) { alert(e.message); }
 };
 
-// Choose team
+// Confirm team
 chooseTeamBtn.onclick = async () => {
   const user = auth.currentUser;
-  if (!user) return;
-  await setDoc(doc(db, "users", user.uid), { team: selectedTeam });
+  if (!user) return alert("Login first!");
+  await setDoc(doc(db, "users", user.uid), { email: user.email, team: selectedTeam });
   alert(`Team ${selectedTeam} chosen!`);
 };
 
-// Logout
+// Sign out
 signoutBtn.onclick = () => signOut(auth);
 
-// Auth listener
-onAuthStateChanged(auth, async (user) => {
+// Auth state change
+onAuthStateChanged(auth, async user => {
   if (user) {
-    authSection.classList.add("hidden");
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
     if (snap.exists()) {
       const data = snap.data();
-      userEmailSpan.textContent = user.email;
+      userEmailSpan.textContent = data.email;
       yourTeamSpan.textContent = data.team;
+      authSection.classList.add("hidden");
       teamSelect.classList.add("hidden");
       dashboard.classList.remove("hidden");
     } else {
-      teamSelect.classList.remove("hidden");
+      authSection.classList.add("hidden");
       dashboard.classList.add("hidden");
+      teamSelect.classList.remove("hidden");
     }
   } else {
     authSection.classList.remove("hidden");
