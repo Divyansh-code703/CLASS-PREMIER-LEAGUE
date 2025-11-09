@@ -1,52 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Class Premier League — Phase 1</title>
-  <link rel="stylesheet" href="style.css" />
-  <script type="module" src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Premier League - Login & Team Selection</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div class="container">
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+      <img src="IMG-20251107-WA0004(1).jpg" alt="Logo" class="logo">
+      <h1>Class Premier League</h1>
+      <input type="email" id="email" placeholder="Enter your email">
+      <input type="password" id="password" placeholder="Enter your password">
+      <button id="loginBtn">Login</button>
+      <p id="login-message"></p>
+    </div>
 
-    <header class="header">
-      <img src="IMG-20251107-WA0004(1).jpg" alt="CPL Logo" class="logo" />
-      <h1>Class Premier League (CPL)</h1>
-    </header>
-
-    <!-- LOGIN / SIGNUP -->
-    <section id="authSection" class="card active">
-      <h2>Login or Sign Up</h2>
-      <input id="email" type="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Password (min 6 chars)" />
-      <div class="btn-row">
-        <button id="signupBtn" class="btn primary">Sign Up</button>
-        <button id="loginBtn" class="btn">Login</button>
-      </div>
-      <p class="hint">New user → Sign Up | Existing user → Login</p>
-    </section>
-
-    <!-- TEAM SELECTION -->
-    <section id="teamSection" class="card hidden">
+    <!-- Team Selection Screen -->
+    <div id="team-screen" class="screen">
       <h2>Select Your Team</h2>
-      <div id="teamsGrid" class="teams-grid"></div>
-      <button id="confirmBtn" class="btn primary" disabled>Confirm Team</button>
-      <p class="hint">Tap a team → Confirm → Dashboard</p>
-    </section>
-
-    <!-- DASHBOARD -->
-    <section id="dashboardSection" class="card hidden">
-      <h2>Welcome, <span id="userEmail"></span></h2>
-      <p><strong>Your Team:</strong> <span id="yourTeam">—</span></p>
-      <p><strong>Purse Left:</strong> ₹150 Cr</p>
-      <div class="btn-row">
-        <button class="btn primary" disabled>Go to Auction</button>
-        <button id="signoutBtn" class="btn">Sign out</button>
+      <div class="teams">
+        <div class="team" data-team="RCB">
+          <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB">
+          <p>Royal Challengers Bengaluru</p>
+        </div>
+        <div class="team" data-team="CSK">
+          <img src="chennai-super-kings3461.jpg" alt="CSK">
+          <p>Chennai Super Kings</p>
+        </div>
+        <div class="team" data-team="KKR">
+          <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR">
+          <p>Kolkata Knight Riders</p>
+        </div>
+        <div class="team" data-team="MI">
+          <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI">
+          <p>Mumbai Indians</p>
+        </div>
+        <div class="team" data-team="LSG">
+          <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG">
+          <p>Lucknow Super Giants</p>
+        </div>
+        <div class="team" data-team="SRH">
+          <img src="627d11598a632ca996477eb0.png" alt="SRH">
+          <p>Sunrisers Hyderabad</p>
+        </div>
       </div>
-    </section>
-
-    <footer class="footer">Phase 1 — Login & Team Selection</footer>
+    </div>
   </div>
+
+  <script type="module" src="script.js"></script>
 </body>
-  </html>
+                                  </html>
