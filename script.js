@@ -255,4 +255,29 @@ onAuthStateChanged(auth, async (user)=>{
 (async ()=>{
   // pre-render teams grid so it's snappy after sign-up
   try{ await renderTeamsGrid(); }catch(e){ console.warn(e); }
-})();
+})(); 
+// ---- Sign Up ----
+document.getElementById("signup-btn").addEventListener("click", async () => {
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("✅ Signup successful! You can now log in.");
+  } catch (error) {
+    alert("❌ Signup failed: " + error.message);
+  }
+});
+
+// ---- Login ----
+document.getElementById("login-btn").addEventListener("click", async () => {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("🎉 Login successful!");
+    // yahan tu chahe to redirect kar sakta hai
+    // window.location.href = "auction.html";
+  } catch (error) {
+    alert("❌ Login failed: " + error.message);
+  }
+});
