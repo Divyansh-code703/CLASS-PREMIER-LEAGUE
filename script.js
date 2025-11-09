@@ -1,13 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth, createUserWithEmailAndPassword,
-  signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore, doc, setDoc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // Firebase setup
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-// 🔥 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -16,98 +10,38 @@ const firebaseConfig = {
   messagingSenderId: "59210532535",
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-// DOM
-const authSec = document.getElementById("authSection");
-const teamSec = document.getElementById("teamSection");
-const dashSec = document.getElementById("dashboardSection");
-const confirmBtn = document.getElementById("confirmBtn");
-const userEmailSpan = document.getElementById("userEmail");
-const yourTeamSpan = document.getElementById("yourTeam");
-const teamsGrid = document.getElementById("teamsGrid");
+// Login functionality
+const loginBtn = document.getElementById("loginBtn");
+const loginScreen = document.getElementById("login-screen");
+const teamScreen = document.getElementById("team-screen");
+const loginMsg = document.getElementById("login-message");
 
-// 🏏 Teams list (use your image names)
-const teams = [
-  { name: "RCB", logo: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
-  { name: "CSK", logo: "chennai-super-kings3461.jpg" },
-  { name: "KKR", logo: "778px-Kolkata_Knight_Riders_Logo.svg.png" },
-  { name: "MI",  logo: "1200px-Mumbai_Indians_Logo.svg (1).png" },
-  { name: "LSG", logo: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" },
-  { name: "SRH", logo: "627d11598a632ca996477eb0.png" }
-];
+loginBtn.addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-function show(section) {
-  [authSec, teamSec, dashSec].forEach(s => s.classList.add("hidden"));
-  section.classList.remove("hidden");
-}
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    loginMsg.textContent = "Login successful!";
+    setTimeout(() => {
+      loginScreen.classList.remove("active");
+      teamScreen.classList.add("active");
+    }, 1000);
+  } catch (error) {
+    loginMsg.textContent = "Invalid email or password!";
+  }
+});
 
-// render team cards
-function loadTeams() {
-  teamsGrid.innerHTML = "";
-  teams.forEach(t => {
-    const div = document.createElement("div");
-    div.className = "team-card";
-    div.innerHTML = `<img src="${t.logo}" alt="${t.name}"><p>${t.name}</p>`;
-    div.onclick = () => selectTeam(div, t.name);
-    teamsGrid.appendChild(div);
+// Team selection
+const teams = document.querySelectorAll(".team");
+teams.forEach(team => {
+  team.addEventListener("click", () => {
+    teams.forEach(t => t.style.border = "none");
+    team.style.border = "3px solid #007bff";
+    alert("Team selected: " + team.dataset.team);
   });
-}
-let selectedTeam = null;
-function selectTeam(div, name) {
-  document.querySelectorAll(".team-card").forEach(c => c.classList.remove("selected"));
-  div.classList.add("selected");
-  selectedTeam = name;
-  confirmBtn.disabled = false;
-}
-
-// sign up
-document.getElementById("signupBtn").onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  if (!email || !pass) return alert("Enter both fields");
-  try {
-    const user = await createUserWithEmailAndPassword(auth, email, pass);
-    await setDoc(doc(db, "users", user.user.uid), { email, team: null });
-    alert("Signup success! Now choose team.");
-    loadTeams();
-    show(teamSec);
-  } catch (e) { alert(e.message); }
-};
-
-// login
-document.getElementById("loginBtn").onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value.trim();
-  try {
-    const user = await signInWithEmailAndPassword(auth, email, pass);
-    const snap = await getDoc(doc(db, "users", user.user.uid));
-    const data = snap.data();
-    userEmailSpan.textContent = data.email;
-    if (data.team) {
-      yourTeamSpan.textContent = data.team;
-      show(dashSec);
-    } else {
-      loadTeams();
-      show(teamSec);
-    }
-  } catch (e) { alert(e.message); }
-};
-
-// confirm team
-confirmBtn.onclick = async () => {
-  const user = auth.currentUser;
-  if (!selectedTeam) return alert("Select a team first");
-  await setDoc(doc(db, "users", user.uid), { email: user.email, team: selectedTeam });
-  yourTeamSpan.textContent = selectedTeam;
-  alert(`${selectedTeam} confirmed!`);
-  show(dashSec);
-};
-
-// sign out
-document.getElementById("signoutBtn").onclick = async () => {
-  await signOut(auth);
-  show(authSec);
-};
+});
