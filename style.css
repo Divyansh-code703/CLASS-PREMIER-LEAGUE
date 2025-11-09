@@ -62,9 +62,21 @@ button {
   background: #f5f5f5;
   padding: 10px;
   cursor: pointer;
+  transition: 0.3s;
 }
+.team-card:hover { transform: scale(1.03); }
 .team-card.selected {
   border: 2px solid #0066ff;
   background: #e8f0ff;
+}
+.team-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+.team-name {
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 .footer { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #777; }
