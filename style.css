@@ -64,19 +64,14 @@ button {
   cursor: pointer;
   transition: 0.3s;
 }
-.team-card:hover { transform: scale(1.03); }
 .team-card.selected {
   border: 2px solid #0066ff;
   background: #e8f0ff;
 }
-.team-logo {
-  width: 60px;
-  height: 60px;
+.team-card img {
+  width: 80px;
+  height: 80px;
   object-fit: contain;
-  margin-bottom: 8px;
-}
-.team-name {
-  font-weight: 600;
-  font-size: 0.95rem;
+  margin-bottom: 6px;
 }
 .footer { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #777; }
