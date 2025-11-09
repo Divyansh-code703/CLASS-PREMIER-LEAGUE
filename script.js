@@ -13,7 +13,7 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-// 🔥 Firebase configuration (already yours)
+// ✅ Your Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -23,12 +23,11 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Elements
+// ELEMENTS
 const authSection = document.getElementById("auth");
 const teamSelect = document.getElementById("team-select");
 const dashboard = document.getElementById("dashboard");
@@ -42,73 +41,79 @@ const yourTeamSpan = document.getElementById("yourTeam");
 const chooseTeamBtn = document.getElementById("chooseTeamBtn");
 const teamsGrid = document.getElementById("teamsGrid");
 
-const teams = ["Mumbai Indians","Chennai Super Kings","Royal Challengers Bangalore","Kolkata Knight Riders","Gujarat Titans","Sunrisers Hyderabad"];
 let selectedTeam = "";
 
-// Display teams
-teams.forEach(t => {
+// 🟢 TEAM LIST WITH LOGOS
+const teams = [
+  { name: "Mumbai Indians", logo: "https://upload.wikimedia.org/wikipedia/en/2/25/Mumbai_Indians_Logo.svg" },
+  { name: "Chennai Super Kings", logo: "https://upload.wikimedia.org/wikipedia/en/2/2e/Chennai_Super_Kings_Logo.svg" },
+  { name: "Royal Challengers Bangalore", logo: "https://upload.wikimedia.org/wikipedia/en/3/30/Royal_Challengers_Bangalore_Logo.svg" },
+  { name: "Kolkata Knight Riders", logo: "https://upload.wikimedia.org/wikipedia/en/4/4c/Kolkata_Knight_Riders_Logo.svg" },
+  { name: "Gujarat Titans", logo: "https://upload.wikimedia.org/wikipedia/en/8/89/Gujarat_Titans_Logo.svg" },
+  { name: "Sunrisers Hyderabad", logo: "https://upload.wikimedia.org/wikipedia/en/8/81/Sunrisers_Hyderabad_Logo.svg" }
+];
+
+// 🟢 Render Teams
+teams.forEach(team => {
   const div = document.createElement("div");
   div.className = "team-card";
-  div.innerText = t;
+  div.innerHTML = `
+    <img src="${team.logo}" alt="${team.name}" class="team-logo">
+    <div class="team-name">${team.name}</div>
+  `;
   div.onclick = () => {
     document.querySelectorAll(".team-card").forEach(el => el.classList.remove("selected"));
     div.classList.add("selected");
-    selectedTeam = t;
+    selectedTeam = team.name;
     chooseTeamBtn.disabled = false;
   };
   teamsGrid.appendChild(div);
 });
 
-// Signup
+// 🟡 Signup
 signupBtn.onclick = async () => {
   try {
-    const userCred = await createUserWithEmailAndPassword(
-      auth,
-      emailInput.value,
-      passInput.value
-    );
-    alert("Signup Successful!");
+    const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
+    alert("✅ Signup Successful!");
   } catch (err) {
-    alert(err.message);
+    alert("❌ " + err.message);
   }
 };
 
-// Login
+// 🟡 Login
 loginBtn.onclick = async () => {
   try {
     await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
-    alert("Login Successful!");
+    alert("✅ Login Successful!");
   } catch (err) {
-    alert(err.message);
+    alert("❌ " + err.message);
   }
 };
 
-// Select team
+// 🟢 Select Team
 chooseTeamBtn.onclick = async () => {
   const user = auth.currentUser;
   if (!user) return;
-  await setDoc(doc(db, "users", user.uid), { team: selectedTeam });
-  alert(`Team ${selectedTeam} chosen!`);
+  await setDoc(doc(db, "users", user.uid), { email: user.email, team: selectedTeam });
+  alert(`✅ Team ${selectedTeam} chosen!`);
 };
 
-// Logout
+// 🟡 Logout
 signoutBtn.onclick = () => signOut(auth);
 
-// Auth state listener
+// 🟢 Auth State Changes
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     authSection.classList.add("hidden");
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
     if (snap.exists()) {
-      // team already selected
       const data = snap.data();
-      userEmailSpan.textContent = user.email;
+      userEmailSpan.textContent = data.email;
       yourTeamSpan.textContent = data.team;
       teamSelect.classList.add("hidden");
       dashboard.classList.remove("hidden");
     } else {
-      // select team
       teamSelect.classList.remove("hidden");
       dashboard.classList.add("hidden");
     }
