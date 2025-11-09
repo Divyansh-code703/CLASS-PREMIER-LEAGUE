@@ -15,9 +15,12 @@ const auth = getAuth(app);
 
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
+const mainScreen = document.getElementById("main-screen"); // 👈 next screen (ensure this div exists)
 const loginMsg = document.getElementById("login-message");
 
-// Login
+let selectedTeam = null;
+
+// ✅ Login
 document.getElementById("loginBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -34,7 +37,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 });
 
-// Signup
+// ✅ Signup
 document.getElementById("signupBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -47,11 +50,21 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
   }
 });
 
-// Team selection
+// ✅ Team selection + confirmation + transition fix
 document.querySelectorAll(".team").forEach(team => {
   team.addEventListener("click", () => {
-    document.querySelectorAll(".team").forEach(t => t.style.border = "none");
+    document.querySelectorAll(".team").forEach(t => (t.style.border = "none"));
     team.style.border = "3px solid #007bff";
-    alert("You selected " + team.dataset.team + " 🏏");
+    selectedTeam = team.dataset.team;
+
+    const confirmSelect = confirm(`You selected ${selectedTeam}. Tap OK to confirm.`);
+    if (confirmSelect) {
+      // hide team screen, show main screen
+      teamScreen.classList.remove("active");
+      mainScreen.classList.add("active");
+
+      // optional: show message or data
+      document.getElementById("selected-team-name").textContent = selectedTeam;
+    }
   });
 });
