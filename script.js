@@ -10,17 +10,17 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
-const mainScreen = document.getElementById("main-screen"); // 👈 next screen (ensure this div exists)
+const mainScreen = document.getElementById("main-screen");
 const loginMsg = document.getElementById("login-message");
+const selectedTeamName = document.getElementById("selected-team-name");
 
-let selectedTeam = null;
-
-// ✅ Login
+// LOGIN
 document.getElementById("loginBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -37,7 +37,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 });
 
-// ✅ Signup
+// SIGNUP
 document.getElementById("signupBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -50,21 +50,19 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
   }
 });
 
-// ✅ Team selection + confirmation + transition fix
+// TEAM SELECTION
 document.querySelectorAll(".team").forEach(team => {
   team.addEventListener("click", () => {
-    document.querySelectorAll(".team").forEach(t => (t.style.border = "none"));
+    document.querySelectorAll(".team").forEach(t => t.style.border = "none");
     team.style.border = "3px solid #007bff";
-    selectedTeam = team.dataset.team;
 
-    const confirmSelect = confirm(`You selected ${selectedTeam}. Tap OK to confirm.`);
-    if (confirmSelect) {
-      // hide team screen, show main screen
+    const teamName = team.dataset.team;
+    const confirmChoice = confirm(`You selected ${teamName}! Proceed?`);
+    if (confirmChoice) {
+      // Hide team screen and show main screen
       teamScreen.classList.remove("active");
       mainScreen.classList.add("active");
-
-      // optional: show message or data
-      document.getElementById("selected-team-name").textContent = selectedTeam;
+      selectedTeamName.textContent = teamName;
     }
   });
 });
