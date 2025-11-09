@@ -3,54 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Premier League - Login & Team Selection</title>
+  <title>Class Premier League - Phase 1</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
-    <!-- Login Screen -->
-    <div id="login-screen" class="screen active">
-      <img src="IMG-20251107-WA0004(1).jpg" alt="Logo" class="logo">
-      <h1>Class Premier League</h1>
-      <input type="email" id="email" placeholder="Enter your email">
-      <input type="password" id="password" placeholder="Enter your password">
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="screen active">
+    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo">
+    <h1>Class Premier League</h1>
+
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <div class="btns">
       <button id="loginBtn">Login</button>
-      <p id="login-message"></p>
+      <button id="signupBtn" class="secondary">Sign Up</button>
     </div>
 
-    <!-- Team Selection Screen -->
-    <div id="team-screen" class="screen">
-      <h2>Select Your Team</h2>
-      <div class="teams">
-        <div class="team" data-team="RCB">
-          <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB">
-          <p>Royal Challengers Bengaluru</p>
-        </div>
-        <div class="team" data-team="CSK">
-          <img src="chennai-super-kings3461.jpg" alt="CSK">
-          <p>Chennai Super Kings</p>
-        </div>
-        <div class="team" data-team="KKR">
-          <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR">
-          <p>Kolkata Knight Riders</p>
-        </div>
-        <div class="team" data-team="MI">
-          <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI">
-          <p>Mumbai Indians</p>
-        </div>
-        <div class="team" data-team="LSG">
-          <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG">
-          <p>Lucknow Super Giants</p>
-        </div>
-        <div class="team" data-team="SRH">
-          <img src="627d11598a632ca996477eb0.png" alt="SRH">
-          <p>Sunrisers Hyderabad</p>
-        </div>
+    <p id="login-message"></p>
+  </div>
+
+  <!-- TEAM SELECTION SCREEN -->
+  <div id="team-screen" class="screen">
+    <h2>Select Your Team</h2>
+    <div class="teams">
+      <div class="team" data-team="RCB">
+        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB">
+        <p>RCB</p>
+      </div>
+      <div class="team" data-team="CSK">
+        <img src="chennai-super-kings3461.jpg" alt="CSK">
+        <p>CSK</p>
+      </div>
+      <div class="team" data-team="KKR">
+        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR">
+        <p>KKR</p>
+      </div>
+      <div class="team" data-team="MI">
+        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI">
+        <p>MI</p>
+      </div>
+      <div class="team" data-team="LSG">
+        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG">
+        <p>LSG</p>
+      </div>
+      <div class="team" data-team="SRH">
+        <img src="627d11598a632ca996477eb0.png" alt="SRH">
+        <p>SRH</p>
       </div>
     </div>
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
-                                  </html>
+          </html>
