@@ -1,14 +1,14 @@
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
-const dashboardScreen = document.getElementById("dashboard-screen");
-const selectedTeamName = document.getElementById("selected-team-name");
-const dashboardContent = document.getElementById("dashboard-content");
+const dashboard = document.getElementById("dashboard");
+const bottomNav = document.getElementById("bottom-nav");
 
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
-
-const navButtons = document.querySelectorAll(".nav-btn");
+const selectedTeamName = document.getElementById("selected-team-name");
+const teamLogo = document.getElementById("team-logo");
+const thanksText = document.getElementById("thanks-text");
 
 let users = JSON.parse(localStorage.getItem("users")) || {};
 let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
@@ -18,12 +18,13 @@ function saveData() {
   localStorage.setItem("chosenTeams", JSON.stringify(chosenTeams));
 }
 
-// LOGIN
 loginBtn.addEventListener("click", () => {
+  const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!email || !password) return (loginMsg.textContent = "Enter all fields!");
+  if (!name || !email || !password)
+    return (loginMsg.textContent = "Please fill all fields!");
 
   if (users[email]) {
     if (users[email].password === password) {
@@ -37,20 +38,21 @@ loginBtn.addEventListener("click", () => {
   }
 });
 
-// SIGNUP
 signupBtn.addEventListener("click", () => {
+  const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!email || !password) return (loginMsg.textContent = "Enter all fields!");
+  if (!name || !email || !password)
+    return (loginMsg.textContent = "Enter all fields!");
+
   if (users[email]) return (loginMsg.textContent = "User already exists!");
 
-  users[email] = { password, team: null };
+  users[email] = { name, password, team: null };
   saveData();
   loginMsg.textContent = "Signup successful! Please Login.";
 });
 
-// AFTER LOGIN
 function handleLogin(email) {
   const user = users[email];
   if (!user.team) {
@@ -58,69 +60,54 @@ function handleLogin(email) {
     teamScreen.classList.add("active");
     setupTeamSelection(email);
   } else {
-    showDashboard(user.team);
+    showDashboard(user.team, user.name);
   }
 }
 
-// TEAM SELECTION
 function setupTeamSelection(email) {
   document.querySelectorAll(".team").forEach((teamDiv) => {
     teamDiv.onclick = () => {
       const selectedTeam = teamDiv.dataset.team;
-
       if (Object.values(chosenTeams).includes(selectedTeam)) {
-        alert("This team is already taken by another player!");
+        alert("This team is already taken!");
         return;
       }
-
-      const confirmChoice = confirm(`You chose ${selectedTeam}. Are you sure?`);
+      const confirmChoice = confirm(`You chose ${selectedTeam}. Confirm?`);
       if (confirmChoice) {
         users[email].team = selectedTeam;
         chosenTeams[email] = selectedTeam;
         saveData();
-        showDashboard(selectedTeam);
+        showDashboard(selectedTeam, users[email].name);
       }
     };
   });
 }
 
-// DASHBOARD
-function showDashboard(team) {
+function showDashboard(team, name) {
   loginScreen.classList.remove("active");
   teamScreen.classList.remove("active");
-  dashboardScreen.classList.add("active");
-  selectedTeamName.textContent = team;
+  dashboard.classList.add("active");
+  bottomNav.classList.remove("hidden");
+
+  selectedTeamName.textContent = `Team: ${team}`;
+  thanksText.textContent = `Thanks for joining, ${name}!`;
+
+  const logoMap = {
+    RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
+    CSK: "chennai-super-kings3461.jpg",
+    KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
+    MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
+    LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
+    SRH: "627d11598a632ca996477eb0.png",
+    GT: "627d09228a632ca996477e87 (1).png",
+    PBKS: "Punjab_Kings_Logo.svg.png"
+  };
+  teamLogo.src = logoMap[team];
 }
 
-// Bottom Navigation Button Handling
-navButtons.forEach((btn) => {
+document.querySelectorAll(".nav-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    navButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    const screen = btn.dataset.screen;
-    switch (screen) {
-      case "home":
-        dashboardContent.innerHTML = "<h3>🏠 Auction Room</h3><p>Start exciting team auctions here!</p>";
-        break;
-      case "squad":
-        dashboardContent.innerHTML = "<h3>👤 Manage Squad</h3><p>View and update your squad lineup.</p>";
-        break;
-      case "caps":
-        dashboardContent.innerHTML = "<h3>🧢 Caps</h3><p>Top performers wear the Orange & Purple caps!</p>";
-        break;
-      case "schedule":
-        dashboardContent.innerHTML = "<h3>📅 Schedule</h3><p>Check upcoming matches and fixtures.</p>";
-        break;
-      case "points":
-        dashboardContent.innerHTML = "<h3>📈 Points Table</h3><p>Track your team’s progress in the leaderboard.</p>";
-        break;
-      case "stats":
-        dashboardContent.innerHTML = "<h3>📊 Team Stats</h3><p>View batting and bowling statistics.</p>";
-        break;
-      case "rules":
-        dashboardContent.innerHTML = "<h3>📘 Rules</h3><p>Read all official CPL rules and fair play policies.</p>";
-        break;
-    }
+    const target = btn.dataset.target;
+    if (target === "dashboard") showDashboard("RCB", "Player");
   });
 });
