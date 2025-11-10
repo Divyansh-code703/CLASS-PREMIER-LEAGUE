@@ -13,8 +13,15 @@ body {
   border-radius: 50%;
 }
 
-.screen { display: none; padding: 20px; }
-.screen.active { display: block; }
+.screen {
+  display: none;
+  padding: 20px;
+  min-height: 80vh;
+}
+
+.screen.active {
+  display: block;
+}
 
 input {
   display: block;
@@ -38,8 +45,13 @@ button {
   transition: 0.2s;
 }
 
-button:hover { background: #ff2e63; }
-button.secondary { background: gray; }
+button:hover {
+  background: #ff2e63;
+}
+
+button.secondary {
+  background: gray;
+}
 
 .teams {
   display: flex;
@@ -58,32 +70,40 @@ button.secondary { background: gray; }
   transition: 0.2s;
 }
 
-.team img { width: 80px; height: 80px; }
-.team:hover { background: #16213e; transform: scale(1.05); }
-
-/* DASHBOARD STYLE */
-.dashboard-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 25px;
+.team img {
+  width: 80px;
+  height: 80px;
 }
 
-.card-btn {
+.team:hover {
+  background: #16213e;
+  transform: scale(1.05);
+}
+
+/* Bottom Navigation Bar */
+#bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   background: #0f3460;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 2px solid #e94560;
+}
+
+.nav-btn {
+  background: none;
+  color: white;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
   transition: 0.2s;
 }
 
-.card-btn:hover { transform: scale(1.05); }
-.card-btn.active { background: #1fab89; color: #fff; }
-.card-btn.disabled { background: #444; cursor: not-allowed; }
-
-.note { font-size: 0.9em; opacity: 0.8; margin-bottom: 10px; }
-
-.back-btn {
-  margin-top: 20px;
-  background: #e94560;
-}
+.nav-btn.active {
+  color: #e94560;
+  transform: scale(1.3);
+  }
