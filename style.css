@@ -1,9 +1,16 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: white;
   text-align: center;
-  background: #f5f5f5;
   margin: 0;
   padding: 0;
+}
+
+.logo {
+  width: 120px;
+  margin-top: 40px;
+  border-radius: 50%;
 }
 
 .screen {
@@ -15,18 +22,14 @@ body {
   display: block;
 }
 
-.logo {
-  width: 120px;
-  margin-top: 20px;
-}
-
 input {
   display: block;
   margin: 10px auto;
   padding: 10px;
   width: 80%;
+  border: none;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  outline: none;
 }
 
 button {
@@ -34,13 +37,19 @@ button {
   margin: 5px;
   border: none;
   border-radius: 8px;
-  background-color: #007bff;
+  cursor: pointer;
+  background: #e94560;
   color: white;
   font-weight: bold;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #ff2e63;
 }
 
 button.secondary {
-  background-color: #28a745;
+  background: gray;
 }
 
 .teams {
@@ -48,28 +57,24 @@ button.secondary {
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
+  margin-top: 20px;
 }
 
 .team {
-  border: 2px solid transparent;
-  padding: 10px;
+  background: #0f3460;
   border-radius: 10px;
+  padding: 10px;
+  width: 120px;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s;
-}
-
-.team:hover {
-  transform: scale(1.05);
-  border-color: #007bff;
+  transition: 0.2s;
 }
 
 .team img {
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
+  width: 80px;
+  height: 80px;
 }
 
-.team-logo {
-  width: 160px;
-  margin-top: 20px;
+.team:hover {
+  background: #16213e;
+  transform: scale(1.05);
 }
