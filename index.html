@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Premier League - Phase 1</title>
+  <title>Class Premier League - Phase 2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -56,12 +56,28 @@
     <h2>Welcome to Class Premier League!</h2>
     <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
     <div class="main-options">
-      <button id="startMatchBtn">🏆 Start Match</button>
-      <button id="leaderboardBtn">📊 Leaderboard</button>
-      <button id="settingsBtn">⚙️ Settings</button>
+      <button id="goDashboardBtn">🚀 Go to Dashboard</button>
     </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboard-screen" class="screen">
+    <h2>CPL Team Dashboard</h2>
+    <p class="note">Only "Manage Squad" and "Rules" are active during auction ⚙️</p>
+
+    <div class="dashboard-buttons">
+      <button class="card-btn disabled">🏆 Auction Room</button>
+      <button class="card-btn active">👥 Manage Squad</button>
+      <button class="card-btn disabled">📅 Schedule</button>
+      <button class="card-btn disabled">📊 Points Table</button>
+      <button class="card-btn disabled">🎯 Caps</button>
+      <button class="card-btn disabled">📈 Team Stats</button>
+      <button class="card-btn active">📜 Rules</button>
+    </div>
+
+    <button id="backMainBtn" class="back-btn">⬅ Back to Main Screen</button>
   </div>
 
   <script src="script.js"></script>
 </body>
-          </html>
+        </html>
