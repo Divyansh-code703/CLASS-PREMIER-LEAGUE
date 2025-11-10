@@ -3,61 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Premier League - Phase 1</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>CPL Test</title>
+  <style>
+    body {font-family: Poppins, sans-serif; text-align: center; background:#111; color:#fff;}
+    .screen {display:none; padding:20px;}
+    .active{display:block;}
+    input,button{margin:10px;padding:8px;border-radius:8px;border:none;}
+    button{background:#007bff;color:white;}
+  </style>
 </head>
 <body>
-  <!-- LOGIN SCREEN -->
   <div id="login-screen" class="screen active">
-    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo" />
-    <h1>Class Premier League</h1>
-    <input type="email" id="email" placeholder="Enter Email" />
-    <input type="password" id="password" placeholder="Enter Password" />
-    <div class="btns">
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn" class="secondary">Sign Up</button>
-    </div>
+    <h1>Login Screen</h1>
+    <input type="email" id="email" placeholder="email"><br>
+    <input type="password" id="password" placeholder="password"><br>
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Signup</button>
     <p id="login-message"></p>
   </div>
 
-  <!-- TEAM SELECTION SCREEN -->
   <div id="team-screen" class="screen">
-    <h2>Select Your Team</h2>
-    <div class="teams">
-      <div class="team" data-team="RCB">
-        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB" />
-        <p>RCB</p>
-      </div>
-      <div class="team" data-team="CSK">
-        <img src="chennai-super-kings3461.jpg" alt="CSK" />
-        <p>CSK</p>
-      </div>
-      <div class="team" data-team="KKR">
-        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR" />
-        <p>KKR</p>
-      </div>
-      <div class="team" data-team="MI">
-        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI" />
-        <p>MI</p>
-      </div>
-      <div class="team" data-team="LSG">
-        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG" />
-        <p>LSG</p>
-      </div>
-      <div class="team" data-team="SRH">
-        <img src="627d11598a632ca996477eb0.png" alt="SRH" />
-        <p>SRH</p>
-      </div>
-    </div>
+    <h2>Team Screen</h2>
+    <button id="gotoMain">Go to Main</button>
   </div>
 
-  <!-- MAIN SCREEN -->
   <div id="main-screen" class="screen">
-    <h2>Welcome to Class Premier League!</h2>
-    <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
-    <button id="logoutBtn">Logout</button>
+    <h2>Main Screen</h2>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+      authDomain: "class-premier-league.firebaseapp.com",
+      projectId: "class-premier-league",
+      storageBucket: "class-premier-league.firebasestorage.app",
+      messagingSenderId: "59210532535",
+      appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginScreen=document.getElementById("login-screen");
+    const teamScreen=document.getElementById("team-screen");
+    const mainScreen=document.getElementById("main-screen");
+    const msg=document.getElementById("login-message");
+
+    document.getElementById("loginBtn").addEventListener("click", async()=>{
+      const email=document.getElementById("email").value;
+      const pass=document.getElementById("password").value;
+      msg.textContent="Loading...";
+      try{
+        await signInWithEmailAndPassword(auth,email,pass);
+        msg.textContent="Login OK!";
+        setTimeout(()=>{
+          loginScreen.classList.remove("active");
+          teamScreen.classList.add("active");
+        },1000);
+      }catch(e){
+        msg.textContent="Error "+e.message;
+      }
+    });
+
+    document.getElementById("signupBtn").addEventListener("click", async()=>{
+      const email=document.getElementById("email").value;
+      const pass=document.getElementById("password").value;
+      try{
+        await createUserWithEmailAndPassword(auth,email,pass);
+        msg.textContent="Account created. Now login.";
+      }catch(e){msg.textContent="Error "+e.message;}
+    });
+
+    document.getElementById("gotoMain").addEventListener("click",()=>{
+      teamScreen.classList.remove("active");
+      mainScreen.classList.add("active");
+    });
+  </script>
 </body>
-            </html>
+</html>
