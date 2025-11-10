@@ -1,26 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Premier League - Phase 1</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <!-- LOGIN SCREEN -->
   <div id="login-screen" class="screen active">
-    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo">
+    <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo" />
     <h1>Class Premier League</h1>
-
-    <input type="email" id="email" placeholder="Enter Email">
-    <input type="password" id="password" placeholder="Enter Password">
-
+    <input type="email" id="email" placeholder="Enter Email" />
+    <input type="password" id="password" placeholder="Enter Password" />
     <div class="btns">
       <button id="loginBtn">Login</button>
       <button id="signupBtn" class="secondary">Sign Up</button>
     </div>
-
     <p id="login-message"></p>
   </div>
 
@@ -28,28 +24,28 @@
   <div id="team-screen" class="screen">
     <h2>Select Your Team</h2>
     <div class="teams">
-      <div class="team" data-team="RCB" data-logo="250px-Royal_Challengers_Bengaluru_Logo.svg.png">
-        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB">
+      <div class="team" data-team="RCB">
+        <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" alt="RCB" />
         <p>RCB</p>
       </div>
-      <div class="team" data-team="CSK" data-logo="chennai-super-kings3461.jpg">
-        <img src="chennai-super-kings3461.jpg" alt="CSK">
+      <div class="team" data-team="CSK">
+        <img src="chennai-super-kings3461.jpg" alt="CSK" />
         <p>CSK</p>
       </div>
-      <div class="team" data-team="KKR" data-logo="778px-Kolkata_Knight_Riders_Logo.svg.png">
-        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR">
+      <div class="team" data-team="KKR">
+        <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" alt="KKR" />
         <p>KKR</p>
       </div>
-      <div class="team" data-team="MI" data-logo="1200px-Mumbai_Indians_Logo.svg (1).png">
-        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI">
+      <div class="team" data-team="MI">
+        <img src="1200px-Mumbai_Indians_Logo.svg (1).png" alt="MI" />
         <p>MI</p>
       </div>
-      <div class="team" data-team="LSG" data-logo="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png">
-        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG">
+      <div class="team" data-team="LSG">
+        <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" alt="LSG" />
         <p>LSG</p>
       </div>
-      <div class="team" data-team="SRH" data-logo="627d11598a632ca996477eb0.png">
-        <img src="627d11598a632ca996477eb0.png" alt="SRH">
+      <div class="team" data-team="SRH">
+        <img src="627d11598a632ca996477eb0.png" alt="SRH" />
         <p>SRH</p>
       </div>
     </div>
@@ -58,17 +54,10 @@
   <!-- MAIN SCREEN -->
   <div id="main-screen" class="screen">
     <h2>Welcome to Class Premier League!</h2>
-    <div id="team-display">
-      <img id="team-logo" alt="Team Logo" style="width:120px; height:120px;">
-      <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
-    </div>
-    <div class="main-options">
-      <button id="startMatchBtn">🏆 Start Match</button>
-      <button id="leaderboardBtn">📊 Leaderboard</button>
-      <button id="settingsBtn">⚙️ Settings</button>
-    </div>
+    <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
+    <img id="selected-team-logo" class="team-logo" />
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
-  </html>
+          </html>
