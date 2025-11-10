@@ -1,16 +1,15 @@
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
-const mainScreen = document.getElementById("main-screen");
 const dashboardScreen = document.getElementById("dashboard-screen");
+const selectedTeamName = document.getElementById("selected-team-name");
+const dashboardContent = document.getElementById("dashboard-content");
 
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
-const selectedTeamName = document.getElementById("selected-team-name");
-const goDashboardBtn = document.getElementById("goDashboardBtn");
-const backMainBtn = document.getElementById("backMainBtn");
 
-// ✅ Temporary local storage
+const navButtons = document.querySelectorAll(".nav-btn");
+
 let users = JSON.parse(localStorage.getItem("users")) || {};
 let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
 
@@ -44,7 +43,6 @@ signupBtn.addEventListener("click", () => {
   const password = document.getElementById("password").value.trim();
 
   if (!email || !password) return (loginMsg.textContent = "Enter all fields!");
-
   if (users[email]) return (loginMsg.textContent = "User already exists!");
 
   users[email] = { password, team: null };
@@ -60,7 +58,7 @@ function handleLogin(email) {
     teamScreen.classList.add("active");
     setupTeamSelection(email);
   } else {
-    showMainScreen(user.team);
+    showDashboard(user.team);
   }
 }
 
@@ -69,37 +67,60 @@ function setupTeamSelection(email) {
   document.querySelectorAll(".team").forEach((teamDiv) => {
     teamDiv.onclick = () => {
       const selectedTeam = teamDiv.dataset.team;
+
       if (Object.values(chosenTeams).includes(selectedTeam)) {
-        alert("This team is already taken!");
+        alert("This team is already taken by another player!");
         return;
       }
-      const confirmChoice = confirm(`You chose ${selectedTeam}. Confirm?`);
+
+      const confirmChoice = confirm(`You chose ${selectedTeam}. Are you sure?`);
       if (confirmChoice) {
         users[email].team = selectedTeam;
         chosenTeams[email] = selectedTeam;
         saveData();
-        showMainScreen(selectedTeam);
+        showDashboard(selectedTeam);
       }
     };
   });
 }
 
-// MAIN SCREEN
-function showMainScreen(team) {
-  teamScreen.classList.remove("active");
+// DASHBOARD
+function showDashboard(team) {
   loginScreen.classList.remove("active");
-  dashboardScreen.classList.remove("active");
-  mainScreen.classList.add("active");
+  teamScreen.classList.remove("active");
+  dashboardScreen.classList.add("active");
   selectedTeamName.textContent = team;
 }
 
-// DASHBOARD NAVIGATION
-goDashboardBtn.addEventListener("click", () => {
-  mainScreen.classList.remove("active");
-  dashboardScreen.classList.add("active");
-});
+// Bottom Navigation Button Handling
+navButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    navButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
 
-backMainBtn.addEventListener("click", () => {
-  dashboardScreen.classList.remove("active");
-  mainScreen.classList.add("active");
+    const screen = btn.dataset.screen;
+    switch (screen) {
+      case "home":
+        dashboardContent.innerHTML = "<h3>🏠 Auction Room</h3><p>Start exciting team auctions here!</p>";
+        break;
+      case "squad":
+        dashboardContent.innerHTML = "<h3>👤 Manage Squad</h3><p>View and update your squad lineup.</p>";
+        break;
+      case "caps":
+        dashboardContent.innerHTML = "<h3>🧢 Caps</h3><p>Top performers wear the Orange & Purple caps!</p>";
+        break;
+      case "schedule":
+        dashboardContent.innerHTML = "<h3>📅 Schedule</h3><p>Check upcoming matches and fixtures.</p>";
+        break;
+      case "points":
+        dashboardContent.innerHTML = "<h3>📈 Points Table</h3><p>Track your team’s progress in the leaderboard.</p>";
+        break;
+      case "stats":
+        dashboardContent.innerHTML = "<h3>📊 Team Stats</h3><p>View batting and bowling statistics.</p>";
+        break;
+      case "rules":
+        dashboardContent.innerHTML = "<h3>📘 Rules</h3><p>Read all official CPL rules and fair play policies.</p>";
+        break;
+    }
+  });
 });
