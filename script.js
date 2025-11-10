@@ -1,13 +1,16 @@
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const mainScreen = document.getElementById("main-screen");
+const dashboardScreen = document.getElementById("dashboard-screen");
 
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
 const selectedTeamName = document.getElementById("selected-team-name");
+const goDashboardBtn = document.getElementById("goDashboardBtn");
+const backMainBtn = document.getElementById("backMainBtn");
 
-// ✅ Temporary local database
+// ✅ Temporary local storage
 let users = JSON.parse(localStorage.getItem("users")) || {};
 let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
 
@@ -52,7 +55,6 @@ signupBtn.addEventListener("click", () => {
 // AFTER LOGIN
 function handleLogin(email) {
   const user = users[email];
-
   if (!user.team) {
     loginScreen.classList.remove("active");
     teamScreen.classList.add("active");
@@ -67,16 +69,11 @@ function setupTeamSelection(email) {
   document.querySelectorAll(".team").forEach((teamDiv) => {
     teamDiv.onclick = () => {
       const selectedTeam = teamDiv.dataset.team;
-
-      // Check if already taken
       if (Object.values(chosenTeams).includes(selectedTeam)) {
-        alert("This team is already taken by another player!");
+        alert("This team is already taken!");
         return;
       }
-
-      const confirmChoice = confirm(
-        `You chose ${selectedTeam}. Are you sure?`
-      );
+      const confirmChoice = confirm(`You chose ${selectedTeam}. Confirm?`);
       if (confirmChoice) {
         users[email].team = selectedTeam;
         chosenTeams[email] = selectedTeam;
@@ -91,6 +88,18 @@ function setupTeamSelection(email) {
 function showMainScreen(team) {
   teamScreen.classList.remove("active");
   loginScreen.classList.remove("active");
+  dashboardScreen.classList.remove("active");
   mainScreen.classList.add("active");
   selectedTeamName.textContent = team;
-                                           }
+}
+
+// DASHBOARD NAVIGATION
+goDashboardBtn.addEventListener("click", () => {
+  mainScreen.classList.remove("active");
+  dashboardScreen.classList.add("active");
+});
+
+backMainBtn.addEventListener("click", () => {
+  dashboardScreen.classList.remove("active");
+  mainScreen.classList.add("active");
+});
