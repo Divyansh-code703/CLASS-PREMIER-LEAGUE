@@ -13,14 +13,8 @@ body {
   border-radius: 50%;
 }
 
-.screen {
-  display: none;
-  padding: 20px;
-}
-
-.screen.active {
-  display: block;
-}
+.screen { display: none; padding: 20px; }
+.screen.active { display: block; }
 
 input {
   display: block;
@@ -44,13 +38,8 @@ button {
   transition: 0.2s;
 }
 
-button:hover {
-  background: #ff2e63;
-}
-
-button.secondary {
-  background: gray;
-}
+button:hover { background: #ff2e63; }
+button.secondary { background: gray; }
 
 .teams {
   display: flex;
@@ -69,12 +58,32 @@ button.secondary {
   transition: 0.2s;
 }
 
-.team img {
-  width: 80px;
-  height: 80px;
+.team img { width: 80px; height: 80px; }
+.team:hover { background: #16213e; transform: scale(1.05); }
+
+/* DASHBOARD STYLE */
+.dashboard-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 25px;
 }
 
-.team:hover {
-  background: #16213e;
-  transform: scale(1.05);
+.card-btn {
+  background: #0f3460;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.card-btn:hover { transform: scale(1.05); }
+.card-btn.active { background: #1fab89; color: #fff; }
+.card-btn.disabled { background: #444; cursor: not-allowed; }
+
+.note { font-size: 0.9em; opacity: 0.8; margin-bottom: 10px; }
+
+.back-btn {
+  margin-top: 20px;
+  background: #e94560;
 }
