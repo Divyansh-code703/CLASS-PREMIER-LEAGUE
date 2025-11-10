@@ -7,10 +7,12 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <!-- LOGIN SCREEN -->
   <div id="login-screen" class="screen active">
     <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo" />
     <h1>Class Premier League</h1>
+    <input type="text" id="name" placeholder="Enter Your Name" />
     <input type="email" id="email" placeholder="Enter Email" />
     <input type="password" id="password" placeholder="Enter Password" />
     <div class="btns">
@@ -48,30 +50,40 @@
         <img src="627d11598a632ca996477eb0.png" alt="SRH" />
         <p>SRH</p>
       </div>
+      <div class="team" data-team="GT">
+        <img src="627d09228a632ca996477e87 (1).png" alt="GT" />
+        <p>GT</p>
+      </div>
+      <div class="team" data-team="PBKS">
+        <img src="Punjab_Kings_Logo.svg.png" alt="PBKS" />
+        <p>PBKS</p>
+      </div>
     </div>
   </div>
 
   <!-- DASHBOARD SCREEN -->
-  <div id="dashboard-screen" class="screen">
-    <h2>Welcome to Class Premier League!</h2>
-    <p>You chose team: <span id="selected-team-name"></span> 🏏</p>
-
-    <!-- Dynamic content area -->
-    <div id="dashboard-content">
-      <h3>🏆 Main Dashboard</h3>
-      <p>Select an option below to get started!</p>
+  <div id="dashboard" class="screen">
+    <div class="welcome-section">
+      <img id="team-logo" class="team-logo" alt="Team Logo" />
+      <h2>Welcome to Class Premier League!</h2>
+      <h3 id="thanks-text"></h3>
+      <p id="selected-team-name"></p>
+    </div>
+    <div class="credits">
+      <p>Created by Divyansh & ChatGPT ❤️</p>
     </div>
   </div>
 
   <!-- BOTTOM NAVIGATION BAR -->
-  <div id="bottom-nav">
-    <button class="nav-btn active" data-screen="home">🏠</button>
-    <button class="nav-btn" data-screen="squad">👤</button>
-    <button class="nav-btn" data-screen="caps">🧢</button>
-    <button class="nav-btn" data-screen="schedule">📅</button>
-    <button class="nav-btn" data-screen="points">📈</button>
-    <button class="nav-btn" data-screen="stats">📊</button>
-    <button class="nav-btn" data-screen="rules">📘</button>
+  <div id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-btn" data-target="dashboard">🏠</button>
+    <button class="nav-btn" data-target="auction">💰</button>
+    <button class="nav-btn" data-target="squad">👤</button>
+    <button class="nav-btn" data-target="schedule">📅</button>
+    <button class="nav-btn" data-target="points">📈</button>
+    <button class="nav-btn" data-target="caps">🧢</button>
+    <button class="nav-btn" data-target="stats">📊</button>
+    <button class="nav-btn" data-target="rules">📜</button>
   </div>
 
   <script src="script.js"></script>
