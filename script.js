@@ -1,102 +1,96 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
-  authDomain: "class-premier-league.firebaseapp.com",
-  projectId: "class-premier-league",
-  storageBucket: "class-premier-league.firebasestorage.app",
-  messagingSenderId: "59210532535",
-  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// DOM
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const mainScreen = document.getElementById("main-screen");
+
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
 const selectedTeamName = document.getElementById("selected-team-name");
-const selectedTeamLogo = document.getElementById("selected-team-logo");
+
+// ✅ Temporary local database
+let users = JSON.parse(localStorage.getItem("users")) || {};
+let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
+
+function saveData() {
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("chosenTeams", JSON.stringify(chosenTeams));
+}
 
 // LOGIN
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    loginMsg.textContent = "Login successful!";
-  } catch (e) {
-    loginMsg.textContent = "Invalid email or password.";
+loginBtn.addEventListener("click", () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) return (loginMsg.textContent = "Enter all fields!");
+
+  if (users[email]) {
+    if (users[email].password === password) {
+      loginMsg.textContent = "Login successful!";
+      setTimeout(() => handleLogin(email), 800);
+    } else {
+      loginMsg.textContent = "Wrong password!";
+    }
+  } else {
+    loginMsg.textContent = "User not found. Please Sign Up.";
   }
 });
 
 // SIGNUP
-document.getElementById("signupBtn").addEventListener("click", async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    loginMsg.textContent = "Account created! You can now log in.";
-  } catch {
-    loginMsg.textContent = "Error creating account.";
-  }
+signupBtn.addEventListener("click", () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) return (loginMsg.textContent = "Enter all fields!");
+
+  if (users[email]) return (loginMsg.textContent = "User already exists!");
+
+  users[email] = { password, team: null };
+  saveData();
+  loginMsg.textContent = "Signup successful! Please Login.";
 });
 
-// AUTH STATE
-onAuthStateChanged(auth, async user => {
-  if (user) {
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
+// AFTER LOGIN
+function handleLogin(email) {
+  const user = users[email];
 
-    if (snap.exists()) {
-      // Already has a team
-      const data = snap.data();
-      showMainScreen(data.team, data.logo);
-    } else {
-      loginScreen.classList.remove("active");
-      teamScreen.classList.add("active");
-    }
+  if (!user.team) {
+    loginScreen.classList.remove("active");
+    teamScreen.classList.add("active");
+    setupTeamSelection(email);
+  } else {
+    showMainScreen(user.team);
   }
-});
+}
 
 // TEAM SELECTION
-document.querySelectorAll(".team").forEach(team => {
-  team.addEventListener("click", async () => {
-    const teamName = team.dataset.team;
-    const teamLogo = team.querySelector("img").src;
+function setupTeamSelection(email) {
+  document.querySelectorAll(".team").forEach((teamDiv) => {
+    teamDiv.onclick = () => {
+      const selectedTeam = teamDiv.dataset.team;
 
-    const teamRef = doc(db, "teams", teamName);
-    const teamSnap = await getDoc(teamRef);
+      // Check if already taken
+      if (Object.values(chosenTeams).includes(selectedTeam)) {
+        alert("This team is already taken by another player!");
+        return;
+      }
 
-    if (teamSnap.exists()) {
-      alert("❌ This team is already taken!");
-      return;
-    }
-
-    const confirmChoice = confirm(`You selected ${teamName}. Confirm?`);
-    if (!confirmChoice) return;
-
-    const user = auth.currentUser;
-    if (!user) return;
-
-    // Save in Firestore
-    await setDoc(doc(db, "teams", teamName), { owner: user.email });
-    await setDoc(doc(db, "users", user.uid), { team: teamName, logo: teamLogo });
-
-    showMainScreen(teamName, teamLogo);
+      const confirmChoice = confirm(
+        `You chose ${selectedTeam}. Are you sure?`
+      );
+      if (confirmChoice) {
+        users[email].team = selectedTeam;
+        chosenTeams[email] = selectedTeam;
+        saveData();
+        showMainScreen(selectedTeam);
+      }
+    };
   });
-});
+}
 
-function showMainScreen(teamName, teamLogo) {
+// MAIN SCREEN
+function showMainScreen(team) {
   teamScreen.classList.remove("active");
   loginScreen.classList.remove("active");
   mainScreen.classList.add("active");
-  selectedTeamName.textContent = teamName;
-  selectedTeamLogo.src = teamLogo;
-      }
+  selectedTeamName.textContent = team;
+                                           }
