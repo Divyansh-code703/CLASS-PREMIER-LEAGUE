@@ -2,6 +2,8 @@ const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const dashboard = document.getElementById("dashboard");
 const bottomNav = document.getElementById("bottom-nav");
+const screens = document.querySelectorAll(".screen");
+
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
@@ -11,6 +13,7 @@ const thanksText = document.getElementById("thanks-text");
 
 let users = JSON.parse(localStorage.getItem("users")) || {};
 let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
+let currentUserEmail = null;
 
 function saveData() {
   localStorage.setItem("users", JSON.stringify(users));
@@ -28,6 +31,7 @@ loginBtn.addEventListener("click", () => {
   if (users[email]) {
     if (users[email].password === password) {
       loginMsg.textContent = "Login successful!";
+      currentUserEmail = email;
       setTimeout(() => handleLogin(email), 800);
     } else {
       loginMsg.textContent = "Wrong password!";
@@ -59,7 +63,8 @@ function handleLogin(email) {
     teamScreen.classList.add("active");
     setupTeamSelection(email);
   } else {
-    showScreen("dashboard", user.team, user.name);
+    showScreen("dashboard");
+    showDashboard(user.team, user.name);
   }
 }
 
@@ -76,59 +81,42 @@ function setupTeamSelection(email) {
         users[email].team = selectedTeam;
         chosenTeams[email] = selectedTeam;
         saveData();
-        showScreen("dashboard", selectedTeam, users[email].name);
+        showScreen("dashboard");
+        showDashboard(selectedTeam, users[email].name);
       }
     };
   });
 }
 
-function showScreen(screen, team = null, name = null) {
-  document.querySelectorAll(".screen").forEach((scr) => scr.classList.remove("active"));
-  document.getElementById(screen).classList.add("active");
-  bottomNav.classList.remove("hidden");
-
-  if (screen === "dashboard") {
-    selectedTeamName.textContent = `Team: ${team}`;
-    thanksText.textContent = `Thanks for joining, ${name}!`;
-
-    const logoMap = {
-      RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
-      CSK: "chennai-super-kings3461.jpg",
-      KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
-      MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
-      LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
-      SRH: "627d11598a632ca996477eb0.png",
-      GT: "627d09228a632ca996477e87 (1).png",
-      PBKS: "Punjab_Kings_Logo.svg.png"
-    };
-    if (teamLogo) teamLogo.src = logoMap[team];
-  }
+function showDashboard(team, name) {
+  const logoMap = {
+    RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
+    CSK: "chennai-super-kings3461.jpg",
+    KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
+    MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
+    LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
+    SRH: "627d11598a632ca996477eb0.png",
+    GT: "627d09228a632ca996477e87 (1).png",
+    PBKS: "Punjab_Kings_Logo.svg.png"
+  };
+  teamLogo.src = logoMap[team];
+  selectedTeamName.textContent = `Team: ${team}`;
+  thanksText.textContent = `Thanks for joining, ${name}!`;
 }
 
-// Create other screens dynamically (Auction, Squad, Schedule, etc.)
-const screenNames = [
-  "auction",
-  "squad",
-  "schedule",
-  "points",
-  "caps",
-  "stats",
-  "rules"
-];
+function showScreen(id) {
+  screens.forEach((s) => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  bottomNav.classList.remove("hidden");
+}
 
-screenNames.forEach((name) => {
-  const div = document.createElement("div");
-  div.id = name;
-  div.classList.add("screen");
-  div.innerHTML = `<h2>${name.toUpperCase()} SCREEN</h2><p>Content coming soon...</p>`;
-  document.body.insertBefore(div, bottomNav);
-});
-
-// Bottom navigation working
 document.querySelectorAll(".nav-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
-    document.querySelectorAll(".screen").forEach((scr) => scr.classList.remove("active"));
-    document.getElementById(target).classList.add("active");
+    showScreen(target);
+    if (target === "dashboard") {
+      const user = users[currentUserEmail];
+      showDashboard(user.team, user.name);
+    }
   });
 });
