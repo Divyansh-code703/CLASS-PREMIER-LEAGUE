@@ -71,6 +71,122 @@
     <button class="nav-btn" data-target="rules">📜</button>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <!-- ✅ SCRIPT CONNECTED TO FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+      authDomain: "class-premier-league.firebaseapp.com",
+      projectId: "class-premier-league",
+      storageBucket: "class-premier-league.firebasestorage.app",
+      messagingSenderId: "59210532535",
+      appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth();
+
+    const loginBtn = document.getElementById("loginBtn");
+    const signupBtn = document.getElementById("signupBtn");
+    const loginMsg = document.getElementById("login-message");
+
+    const loginScreen = document.getElementById("login-screen");
+    const teamScreen = document.getElementById("team-screen");
+    const dashboard = document.getElementById("dashboard");
+    const bottomNav = document.getElementById("bottom-nav");
+
+    // ✅ Sign Up
+    signupBtn.addEventListener("click", async () => {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!name || !email || !password) {
+        loginMsg.textContent = "Please fill all fields.";
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await set(ref(db, "users/" + user.uid), {
+          name: name,
+          email: email,
+          team: "",
+          createdAt: new Date().toISOString(),
+        });
+
+        loginMsg.textContent = "Signup successful! Please login.";
+      } catch (error) {
+        loginMsg.textContent = error.message;
+      }
+    });
+
+    // ✅ Login
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const userRef = ref(db, "users/" + user.uid);
+        const snapshot = await get(userRef);
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (data.team && data.team !== "") {
+            showDashboard(data.name, data.team);
+          } else {
+            showTeamSelection(data.name, user.uid);
+          }
+        } else {
+          loginMsg.textContent = "User not found in database.";
+        }
+      } catch (error) {
+        loginMsg.textContent = error.message;
+      }
+    });
+
+    // ✅ Show Team Selection
+    function showTeamSelection(name, uid) {
+      loginScreen.classList.remove("active");
+      teamScreen.classList.add("active");
+
+      document.querySelectorAll(".team").forEach((teamEl) => {
+        teamEl.addEventListener("click", async () => {
+          const selectedTeam = teamEl.getAttribute("data-team");
+          await update(ref(db, "users/" + uid), { team: selectedTeam });
+          showDashboard(name, selectedTeam);
+        });
+      });
+    }
+
+    // ✅ Show Dashboard
+    function showDashboard(name, team) {
+      teamScreen.classList.remove("active");
+      dashboard.classList.add("active");
+      bottomNav.classList.remove("hidden");
+
+      document.getElementById("thanks-text").textContent = `Thanks for joining us, ${name}!`;
+      document.getElementById("selected-team-name").textContent = `Your team: ${team}`;
+      document.getElementById("team-logo").src = document.querySelector(`[data-team='${team}'] img`).src;
+    }
+
+    // ✅ Navigation
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-target");
+        document.querySelectorAll(".screen").forEach((scr) => scr.classList.remove("active"));
+        document.getElementById(target).classList.add("active");
+      });
+    });
+  </script>
 </body>
-                                                                                                      </html>
+  </html>
