@@ -1,3 +1,23 @@
+// 🔥 Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
+// ✅ Your Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+  authDomain: "class-premier-league.firebaseapp.com",
+  databaseURL: "https://class-premier-league-default-rtdb.firebaseio.com",
+  projectId: "class-premier-league",
+  storageBucket: "class-premier-league.firebasestorage.app",
+  messagingSenderId: "59210532535",
+  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+};
+
+// 🔧 Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ===== SCREEN SETUP =====
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const dashboard = document.getElementById("dashboard");
@@ -11,15 +31,32 @@ const selectedTeamName = document.getElementById("selected-team-name");
 const teamLogo = document.getElementById("team-logo");
 const thanksText = document.getElementById("thanks-text");
 
-let users = JSON.parse(localStorage.getItem("users")) || {};
-let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
+let users = {};
+let chosenTeams = {};
 let currentUserEmail = null;
 
+// ✅ Load data from Firebase (once on load)
+async function loadData() {
+  try {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, "users"));
+    const teamSnap = await get(child(dbRef, "chosenTeams"));
+    if (snapshot.exists()) users = snapshot.val();
+    if (teamSnap.exists()) chosenTeams = teamSnap.val();
+    console.log("Firebase data loaded ✅");
+  } catch (err) {
+    console.error("Error loading Firebase data:", err);
+  }
+}
+loadData();
+
+// ✅ Save all users & teams to Firebase
 function saveData() {
-  localStorage.setItem("users", JSON.stringify(users));
-  localStorage.setItem("chosenTeams", JSON.stringify(chosenTeams));
+  set(ref(db, "users"), users);
+  set(ref(db, "chosenTeams"), chosenTeams);
 }
 
+// ===== LOGIN / SIGNUP =====
 loginBtn.addEventListener("click", () => {
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -56,6 +93,7 @@ signupBtn.addEventListener("click", () => {
   loginMsg.textContent = "Signup successful! Please Login.";
 });
 
+// ===== HANDLE LOGIN =====
 function handleLogin(email) {
   const user = users[email];
   if (!user.team) {
@@ -68,6 +106,7 @@ function handleLogin(email) {
   }
 }
 
+// ===== TEAM SELECTION =====
 function setupTeamSelection(email) {
   document.querySelectorAll(".team").forEach((teamDiv) => {
     teamDiv.onclick = () => {
@@ -88,6 +127,7 @@ function setupTeamSelection(email) {
   });
 }
 
+// ===== DASHBOARD =====
 function showDashboard(team, name) {
   const logoMap = {
     RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
@@ -104,12 +144,14 @@ function showDashboard(team, name) {
   thanksText.textContent = `Thanks for joining, ${name}!`;
 }
 
+// ===== SCREEN HANDLING =====
 function showScreen(id) {
   screens.forEach((s) => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   bottomNav.classList.remove("hidden");
 }
 
+// ===== BOTTOM NAVIGATION =====
 document.querySelectorAll(".nav-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
