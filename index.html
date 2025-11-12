@@ -1,33 +1,59 @@
-  
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Premier League</title>
   <style>
-    body { font-family: Poppins, sans-serif; text-align:center; background:#111; color:white; }
-    .screen { display:none; }
-    .active { display:block; }
-    input { display:block; margin:8px auto; padding:8px; width:80%; border-radius:8px; border:none; }
-    button { padding:8px 16px; margin:5px; border:none; border-radius:8px; background:#0af; color:white; cursor:pointer; }
-    .teams { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; width:90%; margin:auto; }
-    .team { background:#222; padding:10px; border-radius:10px; cursor:pointer; transition:0.2s; }
-    .team:hover { background:#333; transform:scale(1.05); }
-    .hidden { display:none; }
-    #login-message { color:#0f0; font-weight:bold; margin-top:10px; }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(180deg, #000428, #004e92);
+      color: #fff;
+      text-align: center;
+      margin: 0;
+    }
+    .screen { display: none; padding: 20px; }
+    .active { display: block; }
+    input {
+      display: block; margin: 10px auto; padding: 10px; width: 80%;
+      border-radius: 8px; border: none; outline: none;
+    }
+    button {
+      margin: 5px; padding: 10px 20px; border: none;
+      border-radius: 10px; background: #00aaff; color: white;
+      font-weight: bold; cursor: pointer; transition: 0.2s;
+    }
+    button:hover { background: #0088cc; }
+    .teams {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 15px; width: 90%; margin: 20px auto;
+    }
+    .team {
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 10px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .team:hover { transform: scale(1.05); background: rgba(255,255,255,0.2); }
+    .team img {
+      width: 80px; height: 80px; object-fit: contain;
+    }
+    #login-message { font-weight: bold; margin-top: 10px; }
+    .team-logo { width: 120px; height: 120px; margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN / SIGNUP -->
+  <!-- LOGIN SCREEN -->
   <div id="login-screen" class="screen active">
+    <img src="IMG-20251107-WA0004(1).jpg" class="logo" style="width:120px;">
     <h1>Class Premier League</h1>
     <input id="name" type="text" placeholder="Enter Name" />
     <input id="email" type="email" placeholder="Enter Email" />
     <input id="password" type="password" placeholder="Enter Password" />
-    <button id="loginBtn">Login</button>
     <button id="signupBtn">Sign Up</button>
+    <button id="loginBtn">Login</button>
     <p id="login-message"></p>
   </div>
 
@@ -35,16 +61,21 @@
   <div id="team-screen" class="screen">
     <h2>Select Your Team</h2>
     <div class="teams">
-      <div class="team" data-team="RCB">RCB</div>
-      <div class="team" data-team="CSK">CSK</div>
-      <div class="team" data-team="MI">MI</div>
-      <div class="team" data-team="KKR">KKR</div>
+      <div class="team" data-team="RCB"><img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png"><p>RCB</p></div>
+      <div class="team" data-team="CSK"><img src="chennai-super-kings3461.jpg"><p>CSK</p></div>
+      <div class="team" data-team="MI"><img src="1200px-Mumbai_Indians_Logo.svg (1).png"><p>MI</p></div>
+      <div class="team" data-team="KKR"><img src="778px-Kolkata_Knight_Riders_Logo.svg.png"><p>KKR</p></div>
+      <div class="team" data-team="LSG"><img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png"><p>LSG</p></div>
+      <div class="team" data-team="SRH"><img src="627d11598a632ca996477eb0.png"><p>SRH</p></div>
+      <div class="team" data-team="GT"><img src="627d09228a632ca996477e87 (1).png"><p>GT</p></div>
+      <div class="team" data-team="PBKS"><img src="Punjab_Kings_Logo.svg.png"><p>PBKS</p></div>
     </div>
   </div>
 
   <!-- DASHBOARD -->
   <div id="dashboard" class="screen">
     <h2 id="welcome-text"></h2>
+    <img id="team-logo" class="team-logo" src="">
     <h3 id="team-name"></h3>
   </div>
 
@@ -53,7 +84,6 @@
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-    // ✅ Your Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
       authDomain: "class-premier-league.firebaseapp.com",
@@ -72,7 +102,7 @@
     const dashboard = document.getElementById("dashboard");
     const msg = document.getElementById("login-message");
 
-    // ✅ SIGN UP
+    // ✅ Sign Up
     document.getElementById("signupBtn").addEventListener("click", async () => {
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
@@ -80,76 +110,71 @@
 
       if (!name || !email || !password) {
         msg.textContent = "❌ Please fill all fields!";
-        msg.style.color = "red";
+        msg.style.color = "yellow";
         return;
       }
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await set(ref(db, "users/" + user.uid), {
-          name: name,
-          email: email,
-          team: ""
-        });
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+        await set(ref(db, "users/" + user.uid), { name, email, team: "" });
         msg.textContent = "✅ Signup successful! Please login now.";
         msg.style.color = "#0f0";
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
+      } catch (e) {
+        msg.textContent = "❌ " + e.message;
         msg.style.color = "red";
       }
     });
 
-    // ✅ LOGIN
+    // ✅ Login
     document.getElementById("loginBtn").addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
       if (!email || !password) {
-        msg.textContent = "❌ Enter email & password!";
-        msg.style.color = "red";
+        msg.textContent = "❌ Enter email and password!";
+        msg.style.color = "yellow";
         return;
       }
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const snap = await get(ref(db, "users/" + user.uid));
-        if (snap.exists()) {
-          const data = snap.val();
-          if (data.team && data.team !== "") {
-            showDashboard(data.name, data.team);
-          } else {
-            showTeamScreen(data.name, user.uid);
-          }
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+        const snapshot = await get(ref(db, "users/" + user.uid));
+        const data = snapshot.val();
+        if (data.team && data.team !== "") {
+          showDashboard(data.name, data.team);
+        } else {
+          showTeamSelection(data.name, user.uid);
         }
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
+      } catch (e) {
+        msg.textContent = "❌ " + e.message;
         msg.style.color = "red";
       }
     });
 
-    // ✅ TEAM SELECT
-    function showTeamScreen(name, uid) {
+    // ✅ Team selection
+    function showTeamSelection(name, uid) {
       loginScreen.classList.remove("active");
       teamScreen.classList.add("active");
-
-      document.querySelectorAll(".team").forEach((el) => {
-        el.onclick = async () => {
-          const selected = el.dataset.team;
+      document.querySelectorAll(".team").forEach((teamEl) => {
+        teamEl.onclick = async () => {
+          const selected = teamEl.dataset.team;
           await update(ref(db, "users/" + uid), { team: selected });
           showDashboard(name, selected);
         };
       });
     }
 
-    // ✅ DASHBOARD DISPLAY
+    // ✅ Dashboard
     function showDashboard(name, team) {
       teamScreen.classList.remove("active");
       dashboard.classList.add("active");
       document.getElementById("welcome-text").textContent = `Welcome, ${name}!`;
-      document.getElementById("team-name").textContent = `Your team: ${team}`;
+      document.getElementById("team-name").textContent = `Your Team: ${team}`;
+      document.getElementById("team-logo").src =
+        document.querySelector(`.team[data-team='${team}'] img`).src;
     }
   </script>
 </body>
-</html>
+                                                                                                              </html>
