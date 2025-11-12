@@ -1,8 +1,7 @@
-// 🔥 Import Firebase SDK
+// ===== FIREBASE SETUP =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-// ✅ Your Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
@@ -13,11 +12,10 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
-// 🔧 Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ===== SCREEN SETUP =====
+// ===== MAIN SCRIPT =====
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const dashboard = document.getElementById("dashboard");
@@ -35,25 +33,26 @@ let users = {};
 let chosenTeams = {};
 let currentUserEmail = null;
 
-// ✅ Load data from Firebase (once on load)
+// ===== Load Data from Firebase =====
 async function loadData() {
   try {
     const dbRef = ref(db);
-    const snapshot = await get(child(dbRef, "users"));
+    const usersSnap = await get(child(dbRef, "users"));
     const teamSnap = await get(child(dbRef, "chosenTeams"));
-    if (snapshot.exists()) users = snapshot.val();
+    if (usersSnap.exists()) users = usersSnap.val();
     if (teamSnap.exists()) chosenTeams = teamSnap.val();
-    console.log("Firebase data loaded ✅");
+    console.log("✅ Data loaded from Firebase");
   } catch (err) {
-    console.error("Error loading Firebase data:", err);
+    console.error("❌ Error loading Firebase data:", err);
   }
 }
 loadData();
 
-// ✅ Save all users & teams to Firebase
+// ===== Save Data to Firebase =====
 function saveData() {
   set(ref(db, "users"), users);
   set(ref(db, "chosenTeams"), chosenTeams);
+  console.log("✅ Data saved to Firebase");
 }
 
 // ===== LOGIN / SIGNUP =====
