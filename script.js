@@ -1,8 +1,6 @@
-// script.js (UPDATED — use this exact file, replaces your previous script.js)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-const firebaseConfig = {
+// Firebase v8 CDN VERSION (NO MODULES)
+var firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
   databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -12,8 +10,8 @@ const firebaseConfig = {
   appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // UI elements
 const loginScreen = document.getElementById("login-screen");
@@ -26,76 +24,65 @@ const selectedTeamName = document.getElementById("selected-team-name");
 const thanksText = document.getElementById("thanks-text");
 
 let currentUserEmail = null;
-let currentUserName = null;
-
-function emailKeyFrom(email) {
-  return email.replace(/\./g, "_");
-}
 
 // LOGIN
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  const emailRaw = document.getElementById("email").value.trim();
+document.getElementById("loginBtn").onclick = () => {
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!emailRaw || !password) {
+  if (!email || !password) {
     loginMsg.textContent = "Enter all fields!";
     return;
   }
 
-  const key = emailKeyFrom(emailRaw);
-  const snap = await get(child(ref(db), "users/" + key));
+  db.ref("users/" + email.replace(/\./g, "_")).once("value", snap => {
+    if (!snap.exists()) {
+      loginMsg.textContent = "User not found!";
+      return;
+    }
 
-  if (!snap.exists()) {
-    loginMsg.textContent = "User not found!";
-    return;
-  }
+    const data = snap.val();
 
-  const data = snap.val();
+    if (data.password !== password) {
+      loginMsg.textContent = "Wrong password!";
+      return;
+    }
 
-  if (data.password !== password) {
-    loginMsg.textContent = "Wrong password!";
-    return;
-  }
+    loginMsg.textContent = "Login Successful!";
+    currentUserEmail = email;
 
-  loginMsg.textContent = "Login Successful!";
-  currentUserEmail = emailRaw;
-  currentUserName = data.name || "";
+    if (!data.team) {
+      showTeamScreen();
+    } else {
+      showDashboard(data.team, data.name);
+    }
+  });
+};
 
-  if (!data.team) {
-    showTeamScreen();
-  } else {
-    showDashboard(data.team, data.name);
-  }
-});
-
-// SIGN UP (auto-login to team selection)
-document.getElementById("signupBtn").addEventListener("click", async () => {
+// SIGN UP
+document.getElementById("signupBtn").onclick = () => {
   const name = document.getElementById("name").value.trim();
-  const emailRaw = document.getElementById("email").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!name || !emailRaw || !password) {
+  if (!name || !email || !password) {
     loginMsg.textContent = "Fill all fields!";
     return;
   }
 
-  const key = emailKeyFrom(emailRaw);
-  const userRef = ref(db, "users/" + key);
-  const snap = await get(userRef);
+  const clean = email.replace(/\./g, "_");
 
-  if (snap.exists()) {
-    loginMsg.textContent = "User already exists!";
-    return;
-  }
+  db.ref("users/" + clean).once("value", snap => {
+    if (snap.exists()) {
+      loginMsg.textContent = "User already exists!";
+      return;
+    }
 
-  await set(userRef, { name, email: emailRaw, password, team: null });
+    db.ref("users/" + clean).set({ name, email, password, team: null });
 
-  // auto-login after signup (go straight to team selection)
-  currentUserEmail = emailRaw;
-  currentUserName = name;
-  loginMsg.textContent = "Signup Successful! Proceed to choose team.";
-  showTeamScreen();
-});
+    loginMsg.textContent = "Signup Successful! Please login.";
+  });
+};
 
 // TEAM SELECTION
 function showTeamScreen() {
@@ -103,30 +90,21 @@ function showTeamScreen() {
   teamScreen.classList.add("active");
 
   document.querySelectorAll(".team").forEach(t => {
-    // ensure handler isn't bound multiple times
-    t.onclick = null;
-    t.onclick = async () => {
+    t.onclick = () => {
       const selectedTeam = t.dataset.team;
+      const cleanEmail = currentUserEmail.replace(/\./g, "_");
 
-      // Check if team already taken
-      const takenSnap = await get(child(ref(db), "chosenTeams/" + selectedTeam));
-      if (takenSnap.exists()) {
-        alert("This team is already taken!");
-        return;
-      }
+      db.ref("chosenTeams/" + selectedTeam).once("value", taken => {
+        if (taken.exists()) {
+          alert("This team is already taken!");
+          return;
+        }
 
-      if (!currentUserEmail || !currentUserName) {
-        // safety: if somehow missing, read name from input or require login again
-        currentUserName = document.getElementById("name").value.trim() || currentUserName || "Player";
-      }
+        db.ref("users/" + cleanEmail).update({ team: selectedTeam });
+        db.ref("chosenTeams/" + selectedTeam).set(currentUserEmail);
 
-      // Save team for this user
-      const cleanEmail = emailKeyFrom(currentUserEmail);
-
-      await update(ref(db, "users/" + cleanEmail), { team: selectedTeam });
-      await set(ref(db, "chosenTeams/" + selectedTeam), cleanEmail);
-
-      showDashboard(selectedTeam, currentUserName);
+        showDashboard(selectedTeam, document.getElementById("name").value);
+      });
     };
   });
 }
@@ -144,9 +122,9 @@ function showDashboard(team, name) {
     PBKS: "Punjab_Kings_Logo.svg.png"
   };
 
-  teamLogo.src = logoMap[team] || "";
+  teamLogo.src = logoMap[team];
   selectedTeamName.textContent = "Team: " + team;
-  thanksText.textContent = "Thanks for joining, " + (name || currentUserName || "Player") + "!";
+  thanksText.textContent = "Thanks for joining, " + name + "!";
 
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   dashboard.classList.add("active");
@@ -158,8 +136,6 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.onclick = () => {
     const id = btn.dataset.target;
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    const targetEl = document.getElementById(id);
-    if (targetEl) targetEl.classList.add("active");
+    document.getElementById(id).classList.add("active");
   };
 });
-```0
