@@ -1,35 +1,3 @@
-// ---------------------- FIREBASE SETUP ---------------------- //
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
-
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc 
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
-  authDomain: "class-premier-league.firebaseapp.com",
-  projectId: "class-premier-league",
-  storageBucket: "class-premier-league.firebasestorage.app",
-  messagingSenderId: "59210532535",
-  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore();
-
-
-// ---------------------- DOM ELEMENTS ---------------------- //
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const dashboard = document.getElementById("dashboard");
@@ -39,101 +7,89 @@ const screens = document.querySelectorAll(".screen");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
-
 const selectedTeamName = document.getElementById("selected-team-name");
 const teamLogo = document.getElementById("team-logo");
 const thanksText = document.getElementById("thanks-text");
 
-let CURRENT_USER_ID = null;
+let users = JSON.parse(localStorage.getItem("users")) || {};
+let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
+let currentUserEmail = null;
 
+function saveData() {
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("chosenTeams", JSON.stringify(chosenTeams));
+}
 
-// ---------------------- SIGNUP ---------------------- //
-signupBtn.addEventListener("click", async () => {
+loginBtn.addEventListener("click", () => {
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!name || !email || !password) {
-    loginMsg.textContent = "Enter all fields!";
-    return;
-  }
+  if (!name || !email || !password)
+    return (loginMsg.textContent = "Please fill all fields!");
 
-  try {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    CURRENT_USER_ID = result.user.uid;
-
-    await setDoc(doc(db, "users", CURRENT_USER_ID), {
-      name: name,
-      email: email,
-      team: null
-    });
-
-    loginMsg.textContent = "Signup successful! Please Login.";
-  } catch (error) {
-    loginMsg.textContent = error.message;
+  if (users[email]) {
+    if (users[email].password === password) {
+      loginMsg.textContent = "Login successful!";
+      currentUserEmail = email;
+      setTimeout(() => handleLogin(email), 800);
+    } else {
+      loginMsg.textContent = "Wrong password!";
+    }
+  } else {
+    loginMsg.textContent = "User not found. Please Sign Up.";
   }
 });
 
-
-// ---------------------- LOGIN ---------------------- //
-loginBtn.addEventListener("click", async () => {
+signupBtn.addEventListener("click", () => {
+  const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!email || !password) {
-    loginMsg.textContent = "Please enter email & password!";
-    return;
-  }
+  if (!name || !email || !password)
+    return (loginMsg.textContent = "Enter all fields!");
 
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    CURRENT_USER_ID = userCredential.user.uid;
+  if (users[email]) return (loginMsg.textContent = "User already exists!");
 
-    loginMsg.textContent = "Login successful!";
-
-    const userDoc = await getDoc(doc(db, "users", CURRENT_USER_ID));
-
-    if (userDoc.exists()) {
-      const data = userDoc.data();
-
-      if (data.team === null) {
-        showScreen("team-screen");
-      } else {
-        showDashboard(data.team, data.name);
-        showScreen("dashboard");
-      }
-    }
-
-  } catch (error) {
-    loginMsg.textContent = "Wrong credentials!";
-  }
+  users[email] = { name, password, team: null };
+  saveData();
+  loginMsg.textContent = "Signup successful! Please Login.";
 });
 
-
-// ---------------------- TEAM SELECTION ---------------------- //
-document.querySelectorAll(".team").forEach((teamDiv) => {
-  teamDiv.onclick = async () => {
-    const team = teamDiv.dataset.team;
-
-    const confirmChoice = confirm(`Choose ${team}?`);
-    if (!confirmChoice) return;
-
-    await setDoc(doc(db, "users", CURRENT_USER_ID), {
-      team: team
-    }, { merge: true });
-
-    const userDoc = await getDoc(doc(db, "users", CURRENT_USER_ID));
-    const data = userDoc.data();
-
-    showDashboard(team, data.name);
+function handleLogin(email) {
+  const user = users[email];
+  if (!user.team) {
+    loginScreen.classList.remove("active");
+    teamScreen.classList.add("active");
+    setupTeamSelection(email);
+  } else {
     showScreen("dashboard");
-  };
-});
+    showDashboard(user.team, user.name);
+  }
+}
 
+function setupTeamSelection(email) {
+  document.querySelectorAll(".team").forEach((teamDiv) => {
+    teamDiv.onclick = () => {
+      const selectedTeam = teamDiv.dataset.team;
+      if (Object.values(chosenTeams).includes(selectedTeam)) {
+        alert("This team is already taken!");
+        return;
+      }
+      const confirmChoice = confirm(`You chose ${selectedTeam}. Confirm?`);
+      if (confirmChoice) {
+        users[email].team = selectedTeam;
+        chosenTeams[email] = selectedTeam;
+        saveData();
+        showScreen("dashboard");
+        showDashboard(selectedTeam, users[email].name);
+      }
+    };
+  });
+}
 
-// ---------------------- DASHBOARD ---------------------- //
 function showDashboard(team, name) {
-  const logos = {
+  const logoMap = {
     RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
     CSK: "chennai-super-kings3461.jpg",
     KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
@@ -143,31 +99,24 @@ function showDashboard(team, name) {
     GT: "627d09228a632ca996477e87 (1).png",
     PBKS: "Punjab_Kings_Logo.svg.png"
   };
-
-  teamLogo.src = logos[team];
+  teamLogo.src = logoMap[team];
   selectedTeamName.textContent = `Team: ${team}`;
   thanksText.textContent = `Thanks for joining, ${name}!`;
 }
 
-
-// ---------------------- SCREEN CHANGE ---------------------- //
 function showScreen(id) {
-  screens.forEach(s => s.classList.remove("active"));
+  screens.forEach((s) => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   bottomNav.classList.remove("hidden");
 }
 
-
-// ---------------------- NAV BAR ---------------------- //
 document.querySelectorAll(".nav-btn").forEach((btn) => {
-  btn.addEventListener("click", async () => {
+  btn.addEventListener("click", () => {
     const target = btn.dataset.target;
     showScreen(target);
-
     if (target === "dashboard") {
-      const userDoc = await getDoc(doc(db, "users", CURRENT_USER_ID));
-      const data = userDoc.data();
-      showDashboard(data.team, data.name);
+      const user = users[currentUserEmail];
+      showDashboard(user.team, user.name);
     }
   });
 });
