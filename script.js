@@ -17,7 +17,7 @@ let db = firebase.database();
 
 let currentUserEmail = null;
 
-// UI
+// UI elements (ye TUMHARE screenshot se EXACT IDs hain)
 let loginScreen = document.getElementById("login-screen");
 let teamScreen = document.getElementById("team-screen");
 let dashboard = document.getElementById("dashboard");
@@ -27,6 +27,14 @@ let loginMsg = document.getElementById("login-message");
 let teamLogo = document.getElementById("team-logo");
 let selectedTeamName = document.getElementById("selected-team-name");
 let thanksText = document.getElementById("thanks-text");
+
+// ---------------------------------------------------------
+// FIX #1 — BUTTONS NOT WORKING ERROR SOLVED
+// Problem: button par type="submit" HOTAA hai browser default
+// Solution: force type="button"
+// ---------------------------------------------------------
+document.getElementById("loginBtn").type = "button";
+document.getElementById("signupBtn").type = "button";
 
 // ---------------------------------------------------------
 // SIGNUP
@@ -64,8 +72,8 @@ document.getElementById("signupBtn").addEventListener("click", function () {
 // LOGIN
 // ---------------------------------------------------------
 document.getElementById("loginBtn").addEventListener("click", function () {
-  let email = document.getElementById("loginEmail").value.trim();
-  let password = document.getElementById("loginPassword").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
     loginMsg.innerText = "Enter all fields!";
@@ -116,10 +124,8 @@ function showTeamScreen() {
           return;
         }
 
-        // Save user team
         db.ref("users/" + cleanEmail).update({ team: team });
 
-        // Mark team taken
         db.ref("chosenTeams/" + team).set(currentUserEmail);
 
         showDashboard(team, document.getElementById("name").value);
