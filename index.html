@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Premier League - Phase 3</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ✅ Firebase v8 (NO MODULES, WORKS ON PHONE) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
 <body>
 
@@ -12,13 +17,16 @@
   <div id="login-screen" class="screen active">
     <img src="IMG-20251107-WA0004(1).jpg" class="logo" alt="CPL Logo" />
     <h1>Class Premier League</h1>
+
     <input type="text" id="name" placeholder="Enter Your Name" />
     <input type="email" id="email" placeholder="Enter Email" />
     <input type="password" id="password" placeholder="Enter Password" />
+
     <div class="btns">
       <button id="loginBtn">Login</button>
       <button id="signupBtn" class="secondary">Sign Up</button>
     </div>
+
     <p id="login-message"></p>
   </div>
 
@@ -45,6 +53,7 @@
       <h3 id="thanks-text"></h3>
       <p id="selected-team-name"></p>
     </div>
+
     <div class="credits">
       <p>Created by Divyansh & ChatGPT ❤️</p>
     </div>
@@ -71,7 +80,8 @@
     <button class="nav-btn" data-target="rules">📜</button>
   </div>
 
-<script type="module" src="script.js"></script>
+  <!-- ✅ FINAL WORKING SCRIPT -->
+  <script src="script.js"></script>
 
 </body>
-        </html>
+</html>
