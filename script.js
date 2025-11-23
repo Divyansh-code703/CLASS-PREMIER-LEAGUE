@@ -1,3 +1,4 @@
+// script.js (UPDATED — use this exact file, replaces your previous script.js)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
@@ -25,18 +26,24 @@ const selectedTeamName = document.getElementById("selected-team-name");
 const thanksText = document.getElementById("thanks-text");
 
 let currentUserEmail = null;
+let currentUserName = null;
+
+function emailKeyFrom(email) {
+  return email.replace(/\./g, "_");
+}
 
 // LOGIN
 document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value.trim();
+  const emailRaw = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!email || !password) {
+  if (!emailRaw || !password) {
     loginMsg.textContent = "Enter all fields!";
     return;
   }
 
-  const snap = await get(child(ref(db), "users/" + email.replaceAll(".", "_")));
+  const key = emailKeyFrom(emailRaw);
+  const snap = await get(child(ref(db), "users/" + key));
 
   if (!snap.exists()) {
     loginMsg.textContent = "User not found!";
@@ -51,7 +58,8 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 
   loginMsg.textContent = "Login Successful!";
-  currentUserEmail = email;
+  currentUserEmail = emailRaw;
+  currentUserName = data.name || "";
 
   if (!data.team) {
     showTeamScreen();
@@ -60,18 +68,19 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 });
 
-// SIGN UP
+// SIGN UP (auto-login to team selection)
 document.getElementById("signupBtn").addEventListener("click", async () => {
   const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
+  const emailRaw = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!name || !email || !password) {
+  if (!name || !emailRaw || !password) {
     loginMsg.textContent = "Fill all fields!";
     return;
   }
 
-  const userRef = ref(db, "users/" + email.replaceAll(".", "_"));
+  const key = emailKeyFrom(emailRaw);
+  const userRef = ref(db, "users/" + key);
   const snap = await get(userRef);
 
   if (snap.exists()) {
@@ -79,9 +88,13 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
     return;
   }
 
-  await set(userRef, { name, email, password, team: null });
+  await set(userRef, { name, email: emailRaw, password, team: null });
 
-  loginMsg.textContent = "Signup Successful! Please login.";
+  // auto-login after signup (go straight to team selection)
+  currentUserEmail = emailRaw;
+  currentUserName = name;
+  loginMsg.textContent = "Signup Successful! Proceed to choose team.";
+  showTeamScreen();
 });
 
 // TEAM SELECTION
@@ -90,6 +103,8 @@ function showTeamScreen() {
   teamScreen.classList.add("active");
 
   document.querySelectorAll(".team").forEach(t => {
+    // ensure handler isn't bound multiple times
+    t.onclick = null;
     t.onclick = async () => {
       const selectedTeam = t.dataset.team;
 
@@ -100,13 +115,18 @@ function showTeamScreen() {
         return;
       }
 
+      if (!currentUserEmail || !currentUserName) {
+        // safety: if somehow missing, read name from input or require login again
+        currentUserName = document.getElementById("name").value.trim() || currentUserName || "Player";
+      }
+
       // Save team for this user
-      const cleanEmail = currentUserEmail.replaceAll(".", "_");
+      const cleanEmail = emailKeyFrom(currentUserEmail);
 
       await update(ref(db, "users/" + cleanEmail), { team: selectedTeam });
-      await set(ref(db, "chosenTeams/" + selectedTeam), currentUserEmail);
+      await set(ref(db, "chosenTeams/" + selectedTeam), cleanEmail);
 
-      showDashboard(selectedTeam, document.getElementById("name").value);
+      showDashboard(selectedTeam, currentUserName);
     };
   });
 }
@@ -124,9 +144,9 @@ function showDashboard(team, name) {
     PBKS: "Punjab_Kings_Logo.svg.png"
   };
 
-  teamLogo.src = logoMap[team];
+  teamLogo.src = logoMap[team] || "";
   selectedTeamName.textContent = "Team: " + team;
-  thanksText.textContent = "Thanks for joining, " + name + "!";
+  thanksText.textContent = "Thanks for joining, " + (name || currentUserName || "Player") + "!";
 
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   dashboard.classList.add("active");
@@ -138,6 +158,8 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.onclick = () => {
     const id = btn.dataset.target;
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+    const targetEl = document.getElementById(id);
+    if (targetEl) targetEl.classList.add("active");
   };
 });
+```0
