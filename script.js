@@ -64,8 +64,8 @@ document.getElementById("signupBtn").addEventListener("click", function () {
 // LOGIN
 // ---------------------------------------------------------
 document.getElementById("loginBtn").addEventListener("click", function () {
-  let email = document.getElementById("email").value.trim();
-  let password = document.getElementById("password").value.trim();
+  let email = document.getElementById("loginEmail").value.trim();
+  let password = document.getElementById("loginPassword").value.trim();
 
   if (!email || !password) {
     loginMsg.innerText = "Enter all fields!";
@@ -110,7 +110,6 @@ function showTeamScreen() {
       let team = teamDiv.dataset.team;
       let cleanEmail = currentUserEmail.replace(/\./g, "_");
 
-      // Check if team taken
       db.ref("chosenTeams/" + team).once("value", function (snap) {
         if (snap.exists()) {
           alert("This team is already taken!");
