@@ -1,160 +1,143 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-// ------------------ OLD WORKING LOCAL STORAGE DATA ------------------
+const firebaseConfig = {
+  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+  authDomain: "class-premier-league.firebaseapp.com",
+  databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "class-premier-league",
+  storageBucket: "class-premier-league.appspot.com",
+  messagingSenderId: "59210532535",
+  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+};
 
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// UI elements
 const loginScreen = document.getElementById("login-screen");
 const teamScreen = document.getElementById("team-screen");
 const dashboard = document.getElementById("dashboard");
 const bottomNav = document.getElementById("bottom-nav");
-const screens = document.querySelectorAll(".screen");
-
-const loginBtn = document.getElementById("loginBtn");
-const signupBtn = document.getElementById("signupBtn");
 const loginMsg = document.getElementById("login-message");
-const selectedTeamName = document.getElementById("selected-team-name");
 const teamLogo = document.getElementById("team-logo");
+const selectedTeamName = document.getElementById("selected-team-name");
 const thanksText = document.getElementById("thanks-text");
 
-// load data
-let users = JSON.parse(localStorage.getItem("users")) || {};
-let chosenTeams = JSON.parse(localStorage.getItem("chosenTeams")) || {};
 let currentUserEmail = null;
 
-function saveData() {
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("chosenTeams", JSON.stringify(chosenTeams));
-}
+// LOGIN
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-// ------------------ LOGIN ------------------
+  if (!email || !password) {
+    loginMsg.textContent = "Enter all fields!";
+    return;
+  }
 
-loginBtn.addEventListener("click", () => {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  const snap = await get(child(ref(db), "users/" + email.replaceAll(".", "_")));
 
-    if (!name || !email || !password) {
-        loginMsg.textContent = "Please fill all fields!";
-        return;
-    }
+  if (!snap.exists()) {
+    loginMsg.textContent = "User not found!";
+    return;
+  }
 
-    if (!users[email]) {
-        loginMsg.textContent = "User not found. Please Sign Up.";
-        return;
-    }
+  const data = snap.val();
 
-    if (users[email].password !== password) {
-        loginMsg.textContent = "Wrong password!";
-        return;
-    }
+  if (data.password !== password) {
+    loginMsg.textContent = "Wrong password!";
+    return;
+  }
 
-    loginMsg.textContent = "Login successful!";
-    currentUserEmail = email;
+  loginMsg.textContent = "Login Successful!";
+  currentUserEmail = email;
 
-    setTimeout(() => handleLogin(email), 800);
+  if (!data.team) {
+    showTeamScreen();
+  } else {
+    showDashboard(data.team, data.name);
+  }
 });
 
-// ------------------ SIGNUP ------------------
+// SIGN UP
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-signupBtn.addEventListener("click", () => {
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  if (!name || !email || !password) {
+    loginMsg.textContent = "Fill all fields!";
+    return;
+  }
 
-    if (!name || !email || !password) {
-        loginMsg.textContent = "Enter all fields!";
-        return;
-    }
+  const userRef = ref(db, "users/" + email.replaceAll(".", "_"));
+  const snap = await get(userRef);
 
-    if (users[email]) {
-        loginMsg.textContent = "User already exists!";
-        return;
-    }
+  if (snap.exists()) {
+    loginMsg.textContent = "User already exists!";
+    return;
+  }
 
-    users[email] = { name, password, team: null };
-    saveData();
+  await set(userRef, { name, email, password, team: null });
 
-    loginMsg.textContent = "Signup successful! Please Login.";
+  loginMsg.textContent = "Signup Successful! Please login.";
 });
 
-// ------------------ AFTER LOGIN ------------------
+// TEAM SELECTION
+function showTeamScreen() {
+  loginScreen.classList.remove("active");
+  teamScreen.classList.add("active");
 
-function handleLogin(email) {
-    const user = users[email];
+  document.querySelectorAll(".team").forEach(t => {
+    t.onclick = async () => {
+      const selectedTeam = t.dataset.team;
 
-    if (!user.team) {
-        loginScreen.classList.remove("active");
-        teamScreen.classList.add("active");
-        setupTeamSelection(email);
-    } else {
-        showScreen("dashboard");
-        showDashboard(user.team, user.name);
-    }
-}
+      // Check if team already taken
+      const takenSnap = await get(child(ref(db), "chosenTeams/" + selectedTeam));
+      if (takenSnap.exists()) {
+        alert("This team is already taken!");
+        return;
+      }
 
-// ------------------ TEAM SELECTION ------------------
+      // Save team for this user
+      const cleanEmail = currentUserEmail.replaceAll(".", "_");
 
-function setupTeamSelection(email) {
-    document.querySelectorAll(".team").forEach(teamDiv => {
-        teamDiv.onclick = () => {
-            const selectedTeam = teamDiv.dataset.team;
+      await update(ref(db, "users/" + cleanEmail), { team: selectedTeam });
+      await set(ref(db, "chosenTeams/" + selectedTeam), currentUserEmail);
 
-            if (Object.values(chosenTeams).includes(selectedTeam)) {
-                alert("This team is already taken!");
-                return;
-            }
-
-            const confirmChoice = confirm(`You chose ${selectedTeam}. Confirm?`);
-            if (!confirmChoice) return;
-
-            users[email].team = selectedTeam;
-            chosenTeams[email] = selectedTeam;
-            saveData();
-
-            showScreen("dashboard");
-            showDashboard(selectedTeam, users[email].name);
-        };
-    });
-}
-
-// ------------------ DASHBOARD ------------------
-
-function showDashboard(team, name) {
-    const logoMap = {
-        RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
-        CSK: "chennai-super-kings3461.jpg",
-        KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
-        MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
-        LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
-        SRH: "627d11598a632ca996477eb0.png",
-        GT: "627d09228a632ca996477e87 (1).png",
-        PBKS: "Punjab_Kings_Logo.svg.png"
+      showDashboard(selectedTeam, document.getElementById("name").value);
     };
-
-    teamLogo.src = logoMap[team];
-    selectedTeamName.textContent = `Team: ${team}`;
-    thanksText.textContent = `Thanks for joining, ${name}!`;
+  });
 }
 
-// ------------------ SCREEN SWITCH ------------------
+// DASHBOARD
+function showDashboard(team, name) {
+  const logoMap = {
+    RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
+    CSK: "chennai-super-kings3461.jpg",
+    KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
+    MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
+    LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
+    SRH: "627d11598a632ca996477eb0.png",
+    GT: "627d09228a632ca996477e87 (1).png",
+    PBKS: "Punjab_Kings_Logo.svg.png"
+  };
 
-function showScreen(id) {
-    screens.forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+  teamLogo.src = logoMap[team];
+  selectedTeamName.textContent = "Team: " + team;
+  thanksText.textContent = "Thanks for joining, " + name + "!";
 
-    if (id !== "login-screen" && id !== "team-screen") {
-        bottomNav.classList.remove("hidden");
-    }
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  dashboard.classList.add("active");
+  bottomNav.classList.remove("hidden");
 }
 
-// ------------------ NAVIGATION ------------------
-
+// NAV BUTTONS
 document.querySelectorAll(".nav-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const target = btn.dataset.target;
-        showScreen(target);
-
-        if (target === "dashboard") {
-            const user = users[currentUserEmail];
-            showDashboard(user.team, user.name);
-        }
-    });
+  btn.onclick = () => {
+    const id = btn.dataset.target;
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  };
 });
