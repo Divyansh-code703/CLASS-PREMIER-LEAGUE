@@ -1,4 +1,6 @@
-alert("Script connected!");
+document.addEventListener("submit", function(e){
+  e.preventDefault();
+});
 // ---------------------------------------------
 // Firebase Config (v8)
 // ---------------------------------------------
