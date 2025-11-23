@@ -1,84 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Class Premier League - Phase 3</title>
-<link rel="stylesheet" href="styles.css" />
-
-<!-- Firebase v8 -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Premier League</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen" class="screen active">
-  <img src="IMG-20251007-WA0004(1).jpg" class="logo" alt="CPL Logo" />
-  <h1>Class Premier League</h1>
+  <!-- NAVIGATION (Same as your screenshot) -->
+  <nav class="navbar">
+    <h1 class="logo">CPL</h1>
+    <ul class="nav-links">
+      <li>Home</li>
+      <li>Teams</li>
+      <li>Players</li>
+      <li>Auction Room</li>
+    </ul>
+  </nav>
 
-  <input type="text" id="name" placeholder="Enter Your Name" />
-  <input type="email" id="email" placeholder="Enter Email" />
-  <input type="password" id="password" placeholder="Enter Password" />
+  <!-- AUTH SECTION (same as your design) -->
+  <div class="auth-container">
 
-  <div class="btns">
-    <button id="loginBtn" type="button">Login</button>
-    <button id="signupBtn" class="secondary" type="button">Sign Up</button>
+    <h2>Login / Signup</h2>
+
+    <input type="text" id="username" placeholder="Enter Username">
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <button id="signupBtn" type="button">Sign Up</button>
+    <button id="loginBtn" type="button">Log In</button>
+
+    <p id="message"></p>
   </div>
 
-  <p id="login-message"></p>
-</div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
 
-<!-- TEAM SELECTION -->
-<div id="team-screen" class="screen">
-  <h2>Select Your Team</h2>
-  <div class="teams">
-    <div class="team" data-team="RCB"><img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" /><p>RCB</p></div>
-    <div class="team" data-team="CSK"><img src="chennai-super-kings3461.jpg" /><p>CSK</p></div>
-    <div class="team" data-team="KKR"><img src="778px-Kolkata_Knight_Riders_Logo.svg.png" /><p>KKR</p></div>
-    <div class="team" data-team="MI"><img src="1200px-Mumbai_Indians_Logo.svg (1).png" /><p>MI</p></div>
-    <div class="team" data-team="LSG"><img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" /><p>LSG</p></div>
-    <div class="team" data-team="SRH"><img src="627d11598a632ca996477eb0.png" /><p>SRH</p></div>
-    <div class="team" data-team="GT"><img src="627d09228a632ca996477e87 (1).png" /><p>GT</p></div>
-    <div class="team" data-team="PBKS"><img src="Punjab_Kings_Logo.svg.png" /><p>PBKS</p></div>
-  </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="screen">
-  <div class="welcome-section">
-    <img id="team-logo" class="team-logo" alt="Team Logo" />
-    <h2>Welcome to Class Premier League</h2>
-    <h3 id="thanks-text"></h3>
-    <p id="selected-team-name"></p>
-  </div>
-
-  <div class="credits">
-    <p>Created by Divyansh & ChatGPT ❤️</p>
-  </div>
-</div>
-
-<!-- OTHER SCREENS -->
-<div id="auction" class="screen"><h2>Auction Room</h2></div>
-<div id="squad" class="screen"><h2>Manage Squad</h2></div>
-<div id="schedule" class="screen"><h2>Match Schedule</h2></div>
-<div id="points" class="screen"><h2>Points Table</h2></div>
-<div id="caps" class="screen"><h2>Caps & Awards</h2></div>
-<div id="stats" class="screen"><h2>Stats</h2></div>
-<div id="rules" class="screen"><h2>Rules</h2></div>
-
-<!-- BOTTOM NAV -->
-<div id="bottom-nav" class="bottom-nav hidden">
-  <button class="nav-btn" data-target="dashboard">🏠</button>
-  <button class="nav-btn" data-target="auction">💰</button>
-  <button class="nav-btn" data-target="squad">🧑‍🤝‍🧑</button>
-  <button class="nav-btn" data-target="schedule">📅</button>
-  <button class="nav-btn" data-target="points">📊</button>
-  <button class="nav-btn" data-target="caps">🥇</button>
-  <button class="nav-btn" data-target="stats">📈</button>
-  <button class="nav-btn" data-target="rules">📘</button>
-</div>
-
-<script src="script.js"></script>
+  <!-- YOUR JS -->
+  <script src="./script.js"></script>
 </body>
 </html>
