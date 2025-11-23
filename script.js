@@ -1,171 +1,56 @@
-// ---------------------------------------------
-// Firebase Config (v8)
-// ---------------------------------------------
-var firebaseConfig = {
-  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
-  authDomain: "class-premier-league.firebaseapp.com",
-  databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "class-premier-league",
-  storageBucket: "class-premier-league.appspot.com",
-  messagingSenderId: "59210532535",
-  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
+// FIREBASE CONFIG
+const firebaseConfig = {
+  databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
 firebase.initializeApp(firebaseConfig);
-let db = firebase.database();
+const db = firebase.database();
 
-let currentUserEmail = null;
+// ELEMENTS
+const username = document.getElementById("username");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const message = document.getElementById("message");
 
-// UI elements
-let loginScreen = document.getElementById("login-screen");
-let teamScreen = document.getElementById("team-screen");
-let dashboard = document.getElementById("dashboard");
-let bottomNav = document.getElementById("bottom-nav");
-
-let loginMsg = document.getElementById("login-message");
-let teamLogo = document.getElementById("team-logo");
-let selectedTeamName = document.getElementById("selected-team-name");
-let thanksText = document.getElementById("thanks-text");
-
-// PREVENT DEFAULT SUBMIT
-document.addEventListener("submit", e => e.preventDefault());
-
-// FORCE BUTTONS TO BE BUTTON
-document.getElementById("loginBtn").type = "button";
-document.getElementById("signupBtn").type = "button";
-
-// ---------------------------------------------------------
 // SIGNUP
-// ---------------------------------------------------------
 document.getElementById("signupBtn").addEventListener("click", function () {
-  let name = document.getElementById("name").value.trim();
-  let email = document.getElementById("email").value.trim();
-  let password = document.getElementById("password").value.trim();
-
-  if (!name || !email || !password) {
-    loginMsg.innerText = "Fill all fields!";
+  if (!username.value || !email.value || !password.value) {
+    message.innerText = "❌ Fill all fields";
     return;
   }
 
-  // FIXED cleanEmail
-  let cleanEmail = email.replace(/\./g, "_");
-
-  db.ref("users/" + cleanEmail).once("value", function (snap) {
-    if (snap.exists()) {
-      loginMsg.innerText = "User already exists!";
-      return;
-    }
-
-    db.ref("users/" + cleanEmail).set({
-      name: name,
-      email: email,
-      password: password,
-      team: null
+  firebase.database().ref("users/" + username.value).set({
+    username: username.value,
+    email: email.value,
+    password: password.value
+  })
+    .then(() => {
+      message.innerText = "✔️ Signup Successful!";
+    })
+    .catch(() => {
+      message.innerText = "❌ Signup Failed!";
     });
-
-    loginMsg.innerText = "Signup Successful! Now Login.";
-  });
 });
 
-// ---------------------------------------------------------
 // LOGIN
-// ---------------------------------------------------------
 document.getElementById("loginBtn").addEventListener("click", function () {
-  let email = document.getElementById("email").value.trim();
-  let password = document.getElementById("password").value.trim();
-
-  if (!email || !password) {
-    loginMsg.innerText = "Enter all fields!";
+  if (!username.value || !password.value) {
+    message.innerText = "❌ Enter username & password";
     return;
   }
 
-  // FIXED cleanEmail
-  let cleanEmail = email.replace(/\./g, "_");
-
-  db.ref("users/" + cleanEmail).once("value", function (snap) {
+  firebase.database().ref("users/" + username.value).once("value", (snap) => {
     if (!snap.exists()) {
-      loginMsg.innerText = "User not found!";
+      message.innerText = "❌ User not found";
       return;
     }
 
     let data = snap.val();
 
-    if (data.password !== password) {
-      loginMsg.innerText = "Wrong password!";
-      return;
-    }
-
-    loginMsg.innerText = "Login Successful!";
-    currentUserEmail = email;
-
-    if (!data.team) {
-      showTeamScreen();
+    if (data.password === password.value) {
+      message.innerText = "✔️ Login Successful!";
     } else {
-      showDashboard(data.team, data.name);
+      message.innerText = "❌ Wrong password";
     }
   });
-});
-
-// ---------------------------------------------------------
-// TEAM SELECTION
-// ---------------------------------------------------------
-function showTeamScreen() {
-  loginScreen.classList.remove("active");
-  teamScreen.classList.add("active");
-
-  document.querySelectorAll(".team").forEach(teamDiv => {
-    teamDiv.onclick = function () {
-      let team = teamDiv.dataset.team;
-      let cleanEmail = currentUserEmail.replace(/\./g, "_");
-
-      db.ref("chosenTeams/" + team).once("value", function (snap) {
-        if (snap.exists()) {
-          alert("This team is already taken!");
-          return;
-        }
-
-        db.ref("users/" + cleanEmail).update({ team: team });
-        db.ref("chosenTeams/" + team).set(currentUserEmail);
-
-        db.ref("users/" + cleanEmail).once("value", function (s) {
-          showDashboard(team, s.val().name);
-        });
-      });
-    };
-  });
-}
-
-// ---------------------------------------------------------
-// DASHBOARD
-// ---------------------------------------------------------
-function showDashboard(team, name) {
-  let logos = {
-    RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
-    CSK: "chennai-super-kings3461.jpg",
-    KKR: "778px-Kolkata_Knight_Riders_Logo.svg.png",
-    MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
-    LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
-    SRH: "627d11598a632ca996477eb0.png",
-    GT: "627d09228a632ca996477e87 (1).png",
-    PBKS: "Punjab_Kings_Logo.svg.png"
-  };
-
-  teamLogo.src = logos[team];
-  selectedTeamName.innerText = "Team: " + team;
-  thanksText.innerText = "Thanks for joining, " + name + "!";
-
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  dashboard.classList.add("active");
-  bottomNav.classList.remove("hidden");
-}
-
-// ---------------------------------------------------------
-// NAVIGATION
-// ---------------------------------------------------------
-document.querySelectorAll(".nav-btn").forEach(btn => {
-  btn.onclick = () => {
-    let id = btn.dataset.target;
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  };
 });
