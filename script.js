@@ -1,6 +1,3 @@
-document.addEventListener("submit", function(e){
-  e.preventDefault();
-});
 // ---------------------------------------------
 // Firebase Config (v8)
 // ---------------------------------------------
@@ -19,7 +16,7 @@ let db = firebase.database();
 
 let currentUserEmail = null;
 
-// UI elements (ye TUMHARE screenshot se EXACT IDs hain)
+// UI elements
 let loginScreen = document.getElementById("login-screen");
 let teamScreen = document.getElementById("team-screen");
 let dashboard = document.getElementById("dashboard");
@@ -30,11 +27,10 @@ let teamLogo = document.getElementById("team-logo");
 let selectedTeamName = document.getElementById("selected-team-name");
 let thanksText = document.getElementById("thanks-text");
 
-// ---------------------------------------------------------
-// FIX #1 — BUTTONS NOT WORKING ERROR SOLVED
-// Problem: button par type="submit" HOTAA hai browser default
-// Solution: force type="button"
-// ---------------------------------------------------------
+// PREVENT DEFAULT SUBMIT
+document.addEventListener("submit", e => e.preventDefault());
+
+// FORCE BUTTONS TO BE BUTTON
 document.getElementById("loginBtn").type = "button";
 document.getElementById("signupBtn").type = "button";
 
@@ -51,6 +47,7 @@ document.getElementById("signupBtn").addEventListener("click", function () {
     return;
   }
 
+  // FIXED cleanEmail
   let cleanEmail = email.replace(/\./g, "_");
 
   db.ref("users/" + cleanEmail).once("value", function (snap) {
@@ -82,6 +79,7 @@ document.getElementById("loginBtn").addEventListener("click", function () {
     return;
   }
 
+  // FIXED cleanEmail
   let cleanEmail = email.replace(/\./g, "_");
 
   db.ref("users/" + cleanEmail).once("value", function (snap) {
@@ -127,10 +125,11 @@ function showTeamScreen() {
         }
 
         db.ref("users/" + cleanEmail).update({ team: team });
-
         db.ref("chosenTeams/" + team).set(currentUserEmail);
 
-        showDashboard(team, document.getElementById("name").value);
+        db.ref("users/" + cleanEmail).once("value", function (s) {
+          showDashboard(team, s.val().name);
+        });
       });
     };
   });
