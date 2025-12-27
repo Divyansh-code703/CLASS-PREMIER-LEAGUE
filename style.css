@@ -1,31 +1,72 @@
 body {
-  font-family: Arial;
-  background: #111;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
   color: white;
   text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.logo {
+  width: 140px;
+  margin-bottom: 10px;
+}
+
+#authBox {
+  margin-top: 80px;
 }
 
 input {
   display: block;
   margin: 10px auto;
-  padding: 8px;
+  padding: 10px;
+  width: 240px;
+  border-radius: 5px;
+  border: none;
 }
 
 button {
-  padding: 8px 15px;
-  margin: 5px;
+  padding: 10px 18px;
+  margin: 6px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  background: #2563eb;
+  color: white;
+}
+
+#authMsg {
+  color: #f87171;
+}
+
+#teams {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px;
 }
 
 .team {
-  display: inline-block;
-  margin: 10px;
-  padding: 15px;
-  border: 1px solid white;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
-.taken {
-  background: red;
-  cursor: not-allowed;
+.team img {
+  width: 80px;
+}
+
+.team.taken {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.menu button {
+  display: block;
+  width: 220px;
+  margin: 8px auto;
+  background: #16a34a;
 }
