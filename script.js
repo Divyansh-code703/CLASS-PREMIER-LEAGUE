@@ -3,7 +3,8 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import {
   getDatabase,
@@ -28,52 +29,71 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 /* ELEMENTS */
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const authMsg = document.getElementById("authMsg");
 const authBox = document.getElementById("authBox");
 const teamSelect = document.getElementById("teamSelect");
-const teamsDiv = document.getElementById("teams");
 const dashboard = document.getElementById("dashboard");
+const teamsDiv = document.getElementById("teams");
 const myTeam = document.getElementById("myTeam");
+const authMsg = document.getElementById("authMsg");
+
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+
+/* 🔁 RESET UI (VERY IMPORTANT) */
+function resetUI() {
+  authBox.classList.add("hidden");
+  teamSelect.classList.add("hidden");
+  dashboard.classList.add("hidden");
+  authMsg.innerText = "";
+}
 
 /* LOGIN */
 loginBtn.onclick = () => {
   if (!email.value || !password.value) {
-    authMsg.innerText = "Fill all fields";
+    authMsg.innerText = "Please fill email and password";
     return;
   }
 
   signInWithEmailAndPassword(auth, email.value, password.value)
-    .catch(() => authMsg.innerText = "Account not found, signup first");
+    .catch(() => {
+      authMsg.innerText = "Account not found, signup first";
+    });
 };
 
 /* SIGNUP */
 signupBtn.onclick = () => {
   if (!email.value || !password.value) {
-    authMsg.innerText = "Fill all fields";
+    authMsg.innerText = "Please fill email and password";
     return;
   }
 
   createUserWithEmailAndPassword(auth, email.value, password.value)
-    .catch(() => authMsg.innerText = "Account already exists");
+    .catch(() => {
+      authMsg.innerText = "Account already exists, login";
+    });
 };
 
-/* AUTH STATE */
+/* AUTH STATE (🔥 MAIN FIX HERE 🔥) */
 onAuthStateChanged(auth, async user => {
-  if (!user) return;
+  resetUI();
 
-  authBox.classList.add("hidden");
+  if (!user) {
+    authBox.classList.remove("hidden");
+    return;
+  }
 
-  const snap = await get(ref(db, "users/" + user.uid));
-  if (snap.exists()) {
-    showDashboard(snap.val().team);
+  const userSnap = await get(ref(db, "users/" + user.uid));
+
+  if (userSnap.exists() && userSnap.val().team) {
+    showDashboard(userSnap.val().team);
   } else {
     loadTeams(user.uid);
   }
 });
 
-/* TEAMS */
+/* TEAM LIST (8 TEAMS) */
 const teamList = [
   { name: "CSK", img: "chennai-super-kings3461.jpg" },
   { name: "MI", img: "1200px-Mumbai_Indians_Logo.svg (1).png" },
@@ -91,27 +111,28 @@ async function loadTeams(uid) {
   teamsDiv.innerHTML = "";
 
   const takenSnap = await get(ref(db, "teams"));
-  const taken = takenSnap.exists() ? takenSnap.val() : {};
+  const takenTeams = takenSnap.exists() ? takenSnap.val() : {};
 
-  teamList.forEach(t => {
-    if (taken[t.name]) return;
+  teamList.forEach(team => {
+    if (takenTeams[team.name]) return;
 
     const img = document.createElement("img");
-    img.src = t.img;
+    img.src = team.img;
+    img.title = team.name;
 
     img.onclick = async () => {
-      await set(ref(db, "users/" + uid), { team: t.name });
-      await update(ref(db, "teams"), { [t.name]: true });
-      showDashboard(t.name);
+      await set(ref(db, "users/" + uid), { team: team.name });
+      await update(ref(db, "teams"), { [team.name]: true });
+      showDashboard(team.name);
     };
 
     teamsDiv.appendChild(img);
   });
 }
 
-/* DASHBOARD */
+/* SHOW DASHBOARD */
 function showDashboard(team) {
-  teamSelect.classList.add("hidden");
+  resetUI();
   dashboard.classList.remove("hidden");
-  myTeam.innerText = "Your Team: " + team;
-}
+  myTeam.innerText = "Your Team : " + team;
+  }
