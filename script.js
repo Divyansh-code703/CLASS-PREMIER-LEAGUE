@@ -1,9 +1,9 @@
-// ================= FIREBASE SETUP =================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import {
   getDatabase,
@@ -13,10 +13,10 @@ import {
   update
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
-  databaseURL: "https://class-premier-league-default-rtdb.firebaseio.com",
   projectId: "class-premier-league",
   storageBucket: "class-premier-league.firebasestorage.app",
   messagingSenderId: "59210532535",
@@ -27,124 +27,89 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// ================= TEAM LOGOS (ROOT FILES) =================
-const logos = {
-  CSK: "chennai-super-kings3461.jpg",
-  MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
-  RCB: "250px-Royal_Challengers_Bengaluru_Logo.svg.png",
-  KKR: "778px-Kolkata_Knight_Riders_Logo.svg.pn",
-  SRH: "627d11598a632ca996477eb0.png",
-  PBKS: "Punjab_Kings_Logo.svg.png",
-  LSG: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png",
-  GT: "627d09228a632ca996477e87 (1).png"
-};
-
-// ================= ELEMENTS =================
+/* ELEMENTS */
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const authMsg = document.getElementById("authMsg");
 const authBox = document.getElementById("authBox");
 const teamSelect = document.getElementById("teamSelect");
-const dashboard = document.getElementById("dashboard");
 const teamsDiv = document.getElementById("teams");
-const authMsg = document.getElementById("authMsg");
+const dashboard = document.getElementById("dashboard");
 const myTeam = document.getElementById("myTeam");
 
-// ================= SIGNUP =================
-window.signup = async () => {
-  const e = email.value.trim();
-  const p = password.value.trim();
-
-  if (!e && !p) return authMsg.innerText = "Please fill all fields";
-  if (!e) return authMsg.innerText = "Please enter email";
-  if (!p) return authMsg.innerText = "Please enter password";
-
-  try {
-    await createUserWithEmailAndPassword(auth, e, p);
-    authMsg.innerText = "Signup successful, please login";
-  } catch (err) {
-    if (err.code === "auth/email-already-in-use") {
-      authMsg.innerText = "Account already exists, please login";
-    } else if (err.code === "auth/invalid-email") {
-      authMsg.innerText = "Invalid email format";
-    } else if (err.code === "auth/weak-password") {
-      authMsg.innerText = "Password must be at least 6 characters";
-    } else {
-      authMsg.innerText = "Signup failed";
-    }
+/* LOGIN */
+loginBtn.onclick = () => {
+  if (!email.value || !password.value) {
+    authMsg.innerText = "Fill all fields";
+    return;
   }
+
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .catch(() => authMsg.innerText = "Account not found, signup first");
 };
 
-// ================= LOGIN =================
-window.login = async () => {
-  const e = email.value.trim();
-  const p = password.value.trim();
-
-  if (!e && !p) return authMsg.innerText = "Please fill all fields";
-  if (!e) return authMsg.innerText = "Please enter email";
-  if (!p) return authMsg.innerText = "Please enter password";
-
-  try {
-    const userCred = await signInWithEmailAndPassword(auth, e, p);
-    authMsg.innerText = "Login successful";
-    loadAfterLogin(userCred.user.uid);
-  } catch (err) {
-    if (err.code === "auth/user-not-found") {
-      authMsg.innerText = "Account not found, please sign up first";
-    } else if (err.code === "auth/wrong-password") {
-      authMsg.innerText = "Wrong password";
-    } else if (err.code === "auth/invalid-email") {
-      authMsg.innerText = "Invalid email format";
-    } else {
-      authMsg.innerText = "Login failed";
-    }
+/* SIGNUP */
+signupBtn.onclick = () => {
+  if (!email.value || !password.value) {
+    authMsg.innerText = "Fill all fields";
+    return;
   }
+
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    .catch(() => authMsg.innerText = "Account already exists");
 };
 
-// ================= AFTER LOGIN =================
-async function loadAfterLogin(uid) {
+/* AUTH STATE */
+onAuthStateChanged(auth, async user => {
+  if (!user) return;
+
   authBox.classList.add("hidden");
 
-  const snap = await get(ref(db, "users/" + uid));
+  const snap = await get(ref(db, "users/" + user.uid));
   if (snap.exists()) {
     showDashboard(snap.val().team);
   } else {
-    loadTeams(uid);
+    loadTeams(user.uid);
   }
-}
+});
 
-// ================= LOAD TEAMS =================
+/* TEAMS */
+const teamList = [
+  { name: "CSK", img: "chennai-super-kings3461.jpg" },
+  { name: "MI", img: "1200px-Mumbai_Indians_Logo.svg (1).png" },
+  { name: "RCB", img: "250px-Royal_Challengers_Bengaluru_Logo.svg.png" },
+  { name: "KKR", img: "778px-Kolkata_Knight_Riders_Logo.svg.pn" },
+  { name: "SRH", img: "627d11598a632ca996477eb0.png" },
+  { name: "PBKS", img: "Punjab_Kings_Logo.svg.png" },
+  { name: "GT", img: "627d09228a632ca996477e87 (1).png" },
+  { name: "LSG", img: "1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" }
+];
+
+/* LOAD TEAMS */
 async function loadTeams(uid) {
   teamSelect.classList.remove("hidden");
   teamsDiv.innerHTML = "";
 
-  const snap = await get(ref(db, "teams"));
-  const data = snap.val();
+  const takenSnap = await get(ref(db, "teams"));
+  const taken = takenSnap.exists() ? takenSnap.val() : {};
 
-  for (let t in logos) {
-    const div = document.createElement("div");
-    div.className = "team";
+  teamList.forEach(t => {
+    if (taken[t.name]) return;
 
-    if (data[t]?.taken) div.classList.add("taken");
+    const img = document.createElement("img");
+    img.src = t.img;
 
-    div.innerHTML = `
-      <img src="${logos[t]}" />
-      <br>${t}
-    `;
-
-    div.onclick = () => {
-      if (!data[t]?.taken) selectTeam(uid, t);
+    img.onclick = async () => {
+      await set(ref(db, "users/" + uid), { team: t.name });
+      await update(ref(db, "teams"), { [t.name]: true });
+      showDashboard(t.name);
     };
 
-    teamsDiv.appendChild(div);
-  }
+    teamsDiv.appendChild(img);
+  });
 }
 
-// ================= SELECT TEAM =================
-async function selectTeam(uid, team) {
-  await update(ref(db, "teams/" + team), { taken: true });
-  await set(ref(db, "users/" + uid), { team: team });
-  showDashboard(team);
-}
-
-// ================= DASHBOARD =================
+/* DASHBOARD */
 function showDashboard(team) {
   teamSelect.classList.add("hidden");
   dashboard.classList.remove("hidden");
