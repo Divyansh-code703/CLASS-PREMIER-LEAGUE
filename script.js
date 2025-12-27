@@ -33,8 +33,9 @@ const teamMsg = document.getElementById("teamMsg");
 const teamName = document.getElementById("teamName");
 
 // 🔐 AUTH STATE CONTROLLER (IMPORTANT)
-authBox.classList.remove("hidden");
+
 onAuthStateChanged(auth, user => {
+
 
   authBox.classList.remove("hidden");
   teamBox.classList.add("hidden");
