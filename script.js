@@ -1,114 +1,106 @@
+// 🔥 FIREBASE SETUP
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import { 
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
 
-/* 🔥 Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
   authDomain: "class-premier-league.firebaseapp.com",
   databaseURL: "https://class-premier-league-default-rtdb.firebaseio.com",
   projectId: "class-premier-league",
-  storageBucket: "class-premier-league.firebasestorage.app",
-  messagingSenderId: "59210532535",
-  appId: "1:59210532535:web:4558b69e94949b65cc6f32"
 };
 
-/* 🔥 Init */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-/* 🔥 DOM */
+// UI refs
 const authBox = document.getElementById("authBox");
 const teamBox = document.getElementById("teamBox");
-const dashboard = document.getElementById("dashboard");
-const msg = document.getElementById("msg");
+const dashBox = document.getElementById("dashBox");
+const authMsg = document.getElementById("authMsg");
 const teamMsg = document.getElementById("teamMsg");
+const teamName = document.getElementById("teamName");
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
+// AUTH FUNCTIONS
+window.signup = () =>{
+  const email = email.value;
+  const pass = password.value;
 
-/* ================= SIGNUP ================= */
-window.signup = () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-
-  if (!email || !password) {
-    msg.innerText = "❌ Email & Password fill karo";
+  if(!email || !pass){
+    authMsg.innerText = "Fill all fields";
     return;
   }
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      msg.innerText = "✅ Signup successful, now login";
-    })
-    .catch((e) => {
-      if (e.code === "auth/email-already-in-use") {
-        msg.innerText = "⚠️ Account already exists, login karo";
-      } else if (e.code === "auth/weak-password") {
-        msg.innerText = "⚠️ Password kam se kam 6 characters ka ho";
-      } else {
-        msg.innerText = "❌ Signup error";
-      }
-    });
+  createUserWithEmailAndPassword(auth,email,pass)
+  .catch(err=>{
+    if(err.code==="auth/email-already-in-use"){
+      authMsg.innerText="Account exists, login";
+    }else{
+      authMsg.innerText="Signup error";
+    }
+  });
 };
 
-/* ================= LOGIN ================= */
-window.login = () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+window.login = () =>{
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
-  if (!email || !password) {
-    msg.innerText = "❌ Email & Password fill karo";
-    return;
-  }
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      msg.innerText = "✅ Login successful";
-    })
-    .catch((e) => {
-      if (e.code === "auth/user-not-found") {
-        msg.innerText = "❌ Account nahi mila, pehle signup karo";
-      } else if (e.code === "auth/wrong-password") {
-        msg.innerText = "❌ Password galat hai";
-      } else {
-        msg.innerText = "❌ Login failed";
-      }
-    });
+  signInWithEmailAndPassword(auth,email,pass)
+  .catch(err=>{
+    if(err.code==="auth/user-not-found"){
+      authMsg.innerText="Signup first";
+    }else if(err.code==="auth/wrong-password"){
+      authMsg.innerText="Wrong password";
+    }else{
+      authMsg.innerText="Login error";
+    }
+  });
 };
 
-/* ================= AUTH STATE ================= */
-onAuthStateChanged(auth, (user) => {
-  if (!user) return;
-
-  get(ref(db, "users/" + user.uid)).then((snap) => {
+// SESSION CHECK
+onAuthStateChanged(auth,user=>{
+  if(user){
     authBox.classList.add("hidden");
-    if (snap.exists()) {
-      dashboard.classList.remove("hidden");
-    } else {
+    checkTeam(user.uid);
+  }else{
+    authBox.classList.remove("hidden");
+  }
+});
+
+// TEAM LOGIC
+function checkTeam(uid){
+  get(ref(db,"users/"+uid)).then(snap=>{
+    if(snap.exists()){
+      showDashboard(snap.val().team);
+    }else{
       teamBox.classList.remove("hidden");
     }
   });
-});
+}
 
-/* ================= TEAM SELECT ================= */
-window.selectTeam = (team) => {
+window.selectTeam = (team)=>{
   const uid = auth.currentUser.uid;
+  const teamRef = ref(db,"teams/"+team);
 
-  get(ref(db, "teams/" + team)).then((snap) => {
-    if (snap.exists()) {
-      teamMsg.innerText = "❌ Team already taken";
-    } else {
-      set(ref(db, "teams/" + team), uid);
-      set(ref(db, "users/" + uid), { team });
-      teamBox.classList.add("hidden");
-      dashboard.classList.remove("hidden");
+  get(teamRef).then(snap=>{
+    if(snap.exists()){
+      teamMsg.innerText="Team already taken";
+    }else{
+      set(teamRef,{takenBy:uid});
+      set(ref(db,"users/"+uid),{team});
+      showDashboard(team);
     }
   });
+};
+
+function showDashboard(team){
+  teamBox.classList.add("hidden");
+  dashBox.classList.remove("hidden");
+  teamName.innerText="Your Team: "+team;
+}
+
+window.logout = ()=>{
+  signOut(auth);
+  location.reload();
 };
