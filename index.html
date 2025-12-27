@@ -10,43 +10,58 @@
 <!-- LOGIN / SIGNUP -->
 <div id="authBox" class="card">
   <img src="IMG-20251107-WA0004(1).jpg" class="logo">
+  <h2>CPL Login</h2>
+
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
+
   <button onclick="login()">Login</button>
   <button onclick="signup()">Sign Up</button>
-  <p id="msg"></p>
+
+  <p id="authMsg" class="msg"></p>
 </div>
 
 <!-- TEAM SELECTION -->
-<div id="teamBox" class="hidden">
+<div id="teamBox" class="card hidden">
   <h2>Select Your Team</h2>
+
   <div class="teams">
-    <img src="chennai-super-kings3461.jpg" onclick="selectTeam('CSK')">
-    <img src="1200px-Mumbai_Indians_Logo.svg (1).png" onclick="selectTeam('MI')">
-    <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" onclick="selectTeam('RCB')">
-    <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" onclick="selectTeam('KKR')">
-    <img src="627d11598a632ca996477eb0.png" onclick="selectTeam('SRH')">
-    <img src="Punjab_Kings_Logo.svg.png" onclick="selectTeam('PBKS')">
-    <img src="627d09228a632ca996477e87 (1).png" onclick="selectTeam('GT')">
-    <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" onclick="selectTeam('LSG')">
+    <div class="team" onclick="selectTeam('RCB')">
+      <img src="Rcb250px-Royal_Challengers_Bengaluru_Logo.svg.png"><span>RCB</span>
+    </div>
+    <div class="team" onclick="selectTeam('CSK')">
+      <img src="chennai-super-kings3461.jpg"><span>CSK</span>
+    </div>
+    <div class="team" onclick="selectTeam('MI')">
+      <img src="1200px-Mumbai_Indians_Logo.svg (1).png"><span>MI</span>
+    </div>
+    <div class="team" onclick="selectTeam('SRH')">
+      <img src="627d11598a632ca996477eb0.png"><span>SRH</span>
+    </div>
+    <div class="team" onclick="selectTeam('PBKS')">
+      <img src="Punjab_Kings_Logo.svg.png"><span>PBKS</span>
+    </div>
+    <div class="team" onclick="selectTeam('LSG')">
+      <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png"><span>LSG</span>
+    </div>
+    <div class="team" onclick="selectTeam('KKR')">
+      <img src="778px-Kolkata_Knight_Riders_Logo.svg.png"><span>KKR</span>
+    </div>
+    <div class="team" onclick="selectTeam('GT')">
+      <img src="627d09228a632ca996477e87 (1).png"><span>GT</span>
+    </div>
   </div>
-  <p id="teamMsg"></p>
+
+  <p id="teamMsg" class="msg"></p>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
+<div id="dashBox" class="card hidden">
   <h2>🏏 CPL Dashboard</h2>
-  <div class="dash">
-    <button>🏠</button>
-    <button>🔨</button>
-    <button>👥</button>
-    <button>📅</button>
-    <button>📊</button>
-    <button>🏆</button>
-    <button>📜</button>
-  </div>
+  <p id="teamName"></p>
+  <button onclick="logout()">Logout</button>
 </div>
 
 <script type="module" src="script.js"></script>
 </body>
-      </html>
+  </html>
