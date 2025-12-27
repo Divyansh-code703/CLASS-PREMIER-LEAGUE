@@ -1,10 +1,8 @@
-// 🔥 Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import {
   getDatabase,
@@ -28,7 +26,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// 🏏 Team logos (EXACT FILE NAMES)
 const logos = {
   CSK: "chennai-super-kings3461.jpg",
   MI: "1200px-Mumbai_Indians_Logo.svg (1).png",
@@ -40,41 +37,53 @@ const logos = {
   GT: "627d09228a632ca996477e87 (1).png"
 };
 
-// 🔐 Signup
-window.signup = () => {
-  const email = email.value;
-  const pass = password.value;
-  if (!email || !pass) return authMsg.innerText = "Fill all fields";
+const msg = document.getElementById("authMsg");
 
-  createUserWithEmailAndPassword(auth, email, pass)
-    .catch(e => authMsg.innerText = e.message);
+window.signup = async () => {
+  const e = email.value.trim();
+  const p = password.value.trim();
+
+  if (!e && !p) return msg.innerText = "Please fill all fields";
+  if (!e) return msg.innerText = "Please enter email";
+  if (!p) return msg.innerText = "Please enter password";
+  if (p.length < 6) return msg.innerText = "Password must be at least 6 characters";
+
+  try {
+    await createUserWithEmailAndPassword(auth, e, p);
+    msg.innerText = "Signup successful, please login";
+  } catch (err) {
+    msg.innerText = "Account already exists, please login";
+  }
 };
 
-// 🔐 Login
-window.login = () => {
-  const email = email.value;
-  const pass = password.value;
-  if (!email || !pass) return authMsg.innerText = "Fill all fields";
+window.login = async () => {
+  const e = email.value.trim();
+  const p = password.value.trim();
 
-  signInWithEmailAndPassword(auth, email, pass)
-    .catch(() => authMsg.innerText = "Invalid email or password");
+  if (!e && !p) return msg.innerText = "Please fill all fields";
+  if (!e) return msg.innerText = "Please enter email";
+  if (!p) return msg.innerText = "Please enter password";
+
+  try {
+    const user = await signInWithEmailAndPassword(auth, e, p);
+    msg.innerText = "Login successful";
+    loadAfterLogin(user.user.uid);
+  } catch {
+    msg.innerText = "Account not found or wrong password";
+  }
 };
 
-// 🔄 Auth state
-onAuthStateChanged(auth, async user => {
-  if (!user) return;
-
+async function loadAfterLogin(uid) {
   authBox.classList.add("hidden");
 
-  const snap = await get(ref(db, "users/" + user.uid));
+  const snap = await get(ref(db, "users/" + uid));
   if (snap.exists()) {
     showDashboard(snap.val().team);
   } else {
-    loadTeams(user.uid);
+    loadTeams(uid);
   }
-});
+}
 
-// 🏏 Load teams
 async function loadTeams(uid) {
   teamSelect.classList.remove("hidden");
   teams.innerHTML = "";
@@ -93,16 +102,14 @@ async function loadTeams(uid) {
   }
 }
 
-// ✅ Select team
 async function selectTeam(uid, team) {
   await update(ref(db, "teams/" + team), { taken: true });
   await set(ref(db, "users/" + uid), { team });
   showDashboard(team);
 }
 
-// 📊 Dashboard
 function showDashboard(team) {
   teamSelect.classList.add("hidden");
   dashboard.classList.remove("hidden");
   myTeam.innerText = "Your Team: " + team;
-    }
+}
