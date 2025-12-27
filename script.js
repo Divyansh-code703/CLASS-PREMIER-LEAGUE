@@ -33,7 +33,18 @@ const teamMsg = document.getElementById("teamMsg");
 const teamName = document.getElementById("teamName");
 
 // 🔐 AUTH STATE CONTROLLER (IMPORTANT)
+authBox.classList.remove("hidden");
 onAuthStateChanged(auth, user => {
+
+  authBox.classList.remove("hidden");
+  teamBox.classList.add("hidden");
+  dashBox.classList.add("hidden");
+
+  if (!user) return;
+
+  authBox.classList.add("hidden");
+  checkTeam(user.uid);
+});
 
   // sab hide pehle
   authBox.classList.add("hidden");
