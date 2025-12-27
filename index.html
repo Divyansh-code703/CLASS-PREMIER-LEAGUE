@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Class Premier League</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- LOGIN / SIGNUP -->
-<div id="authBox">
-  <img src="IMG-20251107-WA0004(1).jpg" class="logo">
+  <!-- LOGO -->
+  <img src="IMG-20251107-WA0004(1).jpg" class="logo" />
 
-  <h2>Class Premier League</h2>
+  <!-- AUTH BOX -->
+  <div id="authBox">
+    <h2>Login / Signup</h2>
 
-  <input type="email" id="email" placeholder="Enter Email">
-  <input type="password" id="password" placeholder="Enter Password">
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
 
-  <p id="authMsg"></p>
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Signup</button>
 
-  <button onclick="signup()">Sign Up</button>
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- TEAM SELECTION -->
-<div id="teamSelect" class="hidden">
-  <h2>Select Your Team</h2>
-  <div id="teams"></div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-  <h2 id="myTeam"></h2>
-
-  <div class="menu">
-    <button>Dashboard</button>
-    <button>Auction</button>
-    <button>Manage Squad</button>
-    <button>Schedule / Play Match</button>
-    <button>Points Table</button>
-    <button>Caps</button>
-    <button>Teams & Stats</button>
-    <button>Rules</button>
+    <p id="authMsg"></p>
   </div>
-</div>
 
-<script type="module" src="script.js"></script>
+  <!-- TEAM SELECTION -->
+  <div id="teamSelect" class="hidden">
+    <h2>Select Your Team</h2>
+    <div id="teams" class="teams"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+    <h2 id="myTeam"></h2>
+
+    <div class="menu">
+      <button>🏠</button>
+      <button>💰</button>
+      <button>🧢</button>
+      <button>📅</button>
+      <button>📊</button>
+      <button>🎯</button>
+      <button>📈</button>
+      <button>📜</button>
+    </div>
+
+    <p class="hint">
+      🏠 Dashboard | 💰 Auction | 🧢 Squad | 📅 Match |
+      📊 Points | 🎯 Caps | 📈 Stats | 📜 Rules
+    </p>
+  </div>
+
+  <script type="module" src="script.js"></script>
 </body>
   </html>
