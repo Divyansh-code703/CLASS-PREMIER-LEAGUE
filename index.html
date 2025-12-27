@@ -7,42 +7,46 @@
 </head>
 <body>
 
-  <!-- LOGO -->
-  <div class="center">
-    <img src="IMG-20251107-WA0004(1).jpg" class="logo">
+<!-- LOGIN / SIGNUP -->
+<div id="authBox" class="card">
+  <img src="IMG-20251107-WA0004(1).jpg" class="logo">
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
+  <p id="msg"></p>
+</div>
+
+<!-- TEAM SELECTION -->
+<div id="teamBox" class="hidden">
+  <h2>Select Your Team</h2>
+  <div class="teams">
+    <img src="chennai-super-kings3461.jpg" onclick="selectTeam('CSK')">
+    <img src="1200px-Mumbai_Indians_Logo.svg (1).png" onclick="selectTeam('MI')">
+    <img src="250px-Royal_Challengers_Bengaluru_Logo.svg.png" onclick="selectTeam('RCB')">
+    <img src="778px-Kolkata_Knight_Riders_Logo.svg.png" onclick="selectTeam('KKR')">
+    <img src="627d11598a632ca996477eb0.png" onclick="selectTeam('SRH')">
+    <img src="Punjab_Kings_Logo.svg.png" onclick="selectTeam('PBKS')">
+    <img src="627d09228a632ca996477e87 (1).png" onclick="selectTeam('GT')">
+    <img src="1200px-Lucknow_Super_Giants_IPL_Logo.svg (1).png" onclick="selectTeam('LSG')">
   </div>
+  <p id="teamMsg"></p>
+</div>
 
-  <!-- LOGIN / SIGNUP -->
-  <div id="authBox" class="box">
-    <h2>Login / Signup</h2>
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button id="loginBtn">Login</button>
-    <button id="signupBtn">Signup</button>
-    <p id="authMsg"></p>
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+  <h2>🏏 CPL Dashboard</h2>
+  <div class="dash">
+    <button>🏠</button>
+    <button>🔨</button>
+    <button>👥</button>
+    <button>📅</button>
+    <button>📊</button>
+    <button>🏆</button>
+    <button>📜</button>
   </div>
+</div>
 
-  <!-- TEAM SELECT -->
-  <div id="teamSelect" class="box hidden">
-    <h2>Select Team</h2>
-    <div id="teams"></div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="box hidden">
-    <h2 id="myTeam"></h2>
-
-    <div class="menu">
-      <button>🏠</button>
-      <button>💰</button>
-      <button>🧢</button>
-      <button>📅</button>
-      <button>📊</button>
-      <button>👥</button>
-      <button>📜</button>
-    </div>
-  </div>
-
-  <script type="module" src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
-        </html>
+      </html>
