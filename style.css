@@ -1,122 +1,31 @@
 body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  font-family: Arial;
+  background: #111;
   color: white;
   text-align: center;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.logo {
-  width: 120px;
-  margin-top: 40px;
-  border-radius: 50%;
-}
-
-.screen {
-  display: none;
-  padding: 20px;
-}
-
-.screen.active {
-  display: block;
 }
 
 input {
   display: block;
   margin: 10px auto;
-  padding: 10px;
-  width: 80%;
-  border: none;
-  border-radius: 8px;
-  outline: none;
+  padding: 8px;
 }
 
 button {
-  padding: 10px 20px;
+  padding: 8px 15px;
   margin: 5px;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  background: #e94560;
-  color: white;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: #ff2e63;
-}
-
-button.secondary {
-  background: gray;
-}
-
-.teams {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
 }
 
 .team {
-  background: #0f3460;
-  border-radius: 10px;
-  padding: 10px;
-  width: 120px;
+  display: inline-block;
+  margin: 10px;
+  padding: 15px;
+  border: 1px solid white;
   cursor: pointer;
-  transition: 0.2s;
 }
 
-.team img {
-  width: 80px;
-  height: 80px;
+.taken {
+  background: red;
+  cursor: not-allowed;
 }
-
-.team:hover {
-  background: #16213e;
-  transform: scale(1.05);
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #0f3460;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  border-top: 2px solid #e94560;
-}
-
-.bottom-nav.hidden {
-  display: none;
-}
-
-.nav-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-}
-
-.team-logo {
-  width: 100px;
-  margin-top: 20px;
-}
-
-.credits {
-  font-size: 14px;
-  opacity: 0.7;
-  margin-top: 20px;
-}
-
-h2 {
-  margin-top: 60px;
-  }
