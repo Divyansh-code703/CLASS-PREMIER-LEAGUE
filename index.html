@@ -1,36 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Class Premier League</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- LOGO -->
-  <img src="IMG-20251107-WA0004(1).jpg" class="logo" />
+  <div class="center">
+    <img src="IMG-20251107-WA0004(1).jpg" class="logo">
+  </div>
 
-  <!-- AUTH BOX -->
-  <div id="authBox">
+  <!-- LOGIN / SIGNUP -->
+  <div id="authBox" class="box">
     <h2>Login / Signup</h2>
-
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
     <button id="loginBtn">Login</button>
     <button id="signupBtn">Signup</button>
-
     <p id="authMsg"></p>
   </div>
 
-  <!-- TEAM SELECTION -->
-  <div id="teamSelect" class="hidden">
-    <h2>Select Your Team</h2>
-    <div id="teams" class="teams"></div>
+  <!-- TEAM SELECT -->
+  <div id="teamSelect" class="box hidden">
+    <h2>Select Team</h2>
+    <div id="teams"></div>
   </div>
 
   <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden">
+  <div id="dashboard" class="box hidden">
     <h2 id="myTeam"></h2>
 
     <div class="menu">
@@ -39,17 +38,11 @@
       <button>🧢</button>
       <button>📅</button>
       <button>📊</button>
-      <button>🎯</button>
-      <button>📈</button>
+      <button>👥</button>
       <button>📜</button>
     </div>
-
-    <p class="hint">
-      🏠 Dashboard | 💰 Auction | 🧢 Squad | 📅 Match |
-      📊 Points | 🎯 Caps | 📈 Stats | 📜 Rules
-    </p>
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
-  </html>
+        </html>
