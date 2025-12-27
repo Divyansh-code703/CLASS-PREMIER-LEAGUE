@@ -1,56 +1,64 @@
-// FIREBASE CONFIG
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import { getDatabase, ref, onValue, update } 
+from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
 const firebaseConfig = {
-  databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  apiKey: "AIzaSyCdpxNsLzKNeZ9MhQqU_T_oLdg-hCoXzSk",
+  authDomain: "class-premier-league.firebaseapp.com",
+  databaseURL: "https://class-premier-league-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "class-premier-league",
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-// ELEMENTS
-const username = document.getElementById("username");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const message = document.getElementById("message");
+// AUTH
+window.signup = () => {
+  createUserWithEmailAndPassword(auth, email.value, password.value);
+};
 
-// SIGNUP
-document.getElementById("signupBtn").addEventListener("click", function () {
-  if (!username.value || !email.value || !password.value) {
-    message.innerText = "❌ Fill all fields";
-    return;
+window.login = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value);
+};
+
+// LOGIN STATE
+onAuthStateChanged(auth, user => {
+  if (user) {
+    authDiv.style.display = "none";
+    dashboard.style.display = "block";
+    loadTeams(user.uid);
   }
-
-  firebase.database().ref("users/" + username.value).set({
-    username: username.value,
-    email: email.value,
-    password: password.value
-  })
-    .then(() => {
-      message.innerText = "✔️ Signup Successful!";
-    })
-    .catch(() => {
-      message.innerText = "❌ Signup Failed!";
-    });
 });
 
-// LOGIN
-document.getElementById("loginBtn").addEventListener("click", function () {
-  if (!username.value || !password.value) {
-    message.innerText = "❌ Enter username & password";
-    return;
-  }
+function loadTeams(uid) {
+  const teamsRef = ref(db, "teams");
 
-  firebase.database().ref("users/" + username.value).once("value", (snap) => {
-    if (!snap.exists()) {
-      message.innerText = "❌ User not found";
-      return;
-    }
+  onValue(teamsRef, snap => {
+    teams.innerHTML = "";
+    const data = snap.val();
 
-    let data = snap.val();
+    for (let team in data) {
+      const div = document.createElement("div");
+      div.className = "team";
+      div.innerText = team;
 
-    if (data.password === password.value) {
-      message.innerText = "✔️ Login Successful!";
-    } else {
-      message.innerText = "❌ Wrong password";
+      if (data[team].taken) {
+        div.classList.add("taken");
+      } else {
+        div.onclick = () => selectTeam(team, uid);
+      }
+
+      teams.appendChild(div);
     }
   });
-});
+}
+
+function selectTeam(team, uid) {
+  update(ref(db, "teams/" + team), {
+    taken: true,
+    owner: uid
+  });
+                   }
