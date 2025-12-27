@@ -1,46 +1,59 @@
-body {
-  background: #0a0a0a;
-  color: white;
+body{
   font-family: Arial;
-  text-align: center;
+  background:#0b132b;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-.logo {
-  width: 180px;
-  margin: 20px auto;
+.hidden{display:none}
+
+.card{
+  background:#1c2541;
+  padding:25px;
+  border-radius:12px;
+  text-align:center;
+  width:320px;
 }
 
-.box {
-  background: #111;
-  padding: 20px;
-  margin: 20px auto;
-  width: 300px;
-  border-radius: 10px;
+.logo{
+  width:120px;
+  margin-bottom:10px;
 }
 
-input {
-  width: 90%;
-  padding: 8px;
-  margin: 5px 0;
+input{
+  width:90%;
+  padding:8px;
+  margin:6px 0;
 }
 
-button {
-  margin: 5px;
-  padding: 8px 15px;
-  cursor: pointer;
+button{
+  width:95%;
+  padding:8px;
+  margin-top:6px;
+  cursor:pointer;
 }
 
-.hidden {
-  display: none;
+.teams{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
 }
 
-#teams img {
-  width: 80px;
-  margin: 10px;
-  cursor: pointer;
+.teams img{
+  width:80px;
+  cursor:pointer;
 }
 
-.menu button {
-  font-size: 20px;
-  margin: 5px;
+.dash{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.dash button{
+  font-size:22px;
+  padding:15px;
 }
