@@ -1,45 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Class Premier League</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <!-- NAVIGATION (Same as your screenshot) -->
-  <nav class="navbar">
-    <h1 class="logo">CPL</h1>
-    <ul class="nav-links">
-      <li>Home</li>
-      <li>Teams</li>
-      <li>Players</li>
-      <li>Auction Room</li>
-    </ul>
-  </nav>
+<h2>CPL Login</h2>
 
-  <!-- AUTH SECTION (same as your design) -->
-  <div class="auth-container">
+<div id="auth">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Signup</button>
+  <button onclick="login()">Login</button>
+</div>
 
-    <h2>Login / Signup</h2>
+<div id="dashboard" style="display:none;">
+  <h2>Select Your Team</h2>
+  <div id="teams"></div>
+</div>
 
-    <input type="text" id="username" placeholder="Enter Username">
-    <input type="email" id="email" placeholder="Enter Email">
-    <input type="password" id="password" placeholder="Enter Password">
-
-    <button id="signupBtn" type="button">Sign Up</button>
-    <button id="loginBtn" type="button">Log In</button>
-
-    <p id="message"></p>
-  </div>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
-
-  <!-- YOUR JS -->
-  <script src="./script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
-</html>
+  </html>
