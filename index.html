@@ -1,23 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Class Premier League</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>CPL Login</h2>
+<!-- LOGIN / SIGNUP -->
+<div id="authBox">
+  <img src="images/IMG-20251107-WA0004(1).jpg" class="logo">
 
-<div id="auth">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="signup()">Signup</button>
+  <h2>Class Premier League</h2>
+
+  <input type="email" id="email" placeholder="Enter Email">
+  <input type="password" id="password" placeholder="Enter Password">
+
+  <p id="authMsg"></p>
+
+  <button onclick="signup()">Sign Up</button>
   <button onclick="login()">Login</button>
 </div>
 
-<div id="dashboard" style="display:none;">
+<!-- TEAM SELECTION -->
+<div id="teamSelect" class="hidden">
   <h2>Select Your Team</h2>
   <div id="teams"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+  <h2 id="myTeam"></h2>
+
+  <div class="menu">
+    <button>Dashboard</button>
+    <button>Auction</button>
+    <button>Manage Squad</button>
+    <button>Schedule / Play Match</button>
+    <button>Points Table</button>
+    <button>Caps</button>
+    <button>Teams & Stats</button>
+    <button>Rules</button>
+  </div>
 </div>
 
 <script type="module" src="script.js"></script>
